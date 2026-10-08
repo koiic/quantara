@@ -22,7 +22,21 @@ Nexus is an enterprise-grade, highly modular interactive notebook platform desig
 
 ## 🚀 Getting Started
 
-### 1. Start the Backend (Execution Engine)
+The easiest way to run the entire platform (Backend, Frontend, and Sync Server) is using the provided master script:
+
+```bash
+./start_all.sh
+```
+Navigate to `http://localhost:5173`. 
+*(Default Login: `admin` / `admin`)*
+
+---
+
+### Manual Startup (Service by Service)
+
+If you prefer to run the services individually for debugging:
+
+**1. Start the Backend (Execution Engine)**
 
 The backend handles code execution, scheduling, and authentication.
 
