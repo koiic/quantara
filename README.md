@@ -115,8 +115,8 @@ It bridges the gap between interactive Python research notebooks, high-frequency
 ### 1-Click Local Launch
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/quantara-quant-platform.git
-cd quantara-quant-platform/dpp
+git clone https://github.com/koiic/quantara.git
+cd quantara/dpp
 
 # Run all services concurrently (FastAPI, React, Streamlit, Yjs)
 ./start_all.sh
@@ -143,7 +143,7 @@ Quantara is optimized for native host execution without Docker memory overhead, 
 ssh root@<YOUR_VPS_IP>
 
 # 2. Clone repository to /opt/quantara
-git clone https://github.com/your-org/quantara-quant-platform.git /opt/quantara
+git clone https://github.com/koiic/quantara.git /opt/quantara
 cd /opt/quantara
 
 # 3. Execute automated production deployer
