@@ -1,0 +1,17 @@
+[Unit]
+Description=Nexus Quant Platform - Yjs Multiplayer CRDT WebSocket Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/nexus/dpp/backend
+ExecStart=/usr/bin/npx --yes y-websocket
+Restart=always
+RestartSec=3
+Environment=HOST=127.0.0.1
+Environment=PORT=1234
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

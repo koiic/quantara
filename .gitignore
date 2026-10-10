@@ -23,3 +23,7 @@ datalake/
 
 # OS
 .DS_Store
+
+# SQLite
+*.db
+backend/data/

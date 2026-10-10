@@ -1,0 +1,87 @@
+# ==============================================================================
+# NEXUS QUANT PLATFORM - PRODUCTION CADDY CONFIGURATION
+# Supports both:
+# 1. Raw Public IP (e.g. http://195.201.x.x)
+# 2. Custom Domain with Automatic HTTPS / TLS (e.g. https://quant.firm.com)
+# ==============================================================================
+
+# Global options
+{
+    admin off
+}
+
+# ------------------------------------------------------------------------------
+# 1. Public IP Listener (HTTP Port 80)
+# Works out of the box before DNS or custom domain is configured.
+# ------------------------------------------------------------------------------
+:80 {
+    # Serve compiled React SPA
+    root * /opt/nexus/dpp/frontend/dist
+    file_server
+
+    # Yjs Multiplayer WebSocket Server
+    handle /yjs-ws* {
+        reverse_proxy 127.0.0.1:1234 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # Streamlit Executive Dashboard
+    handle_path /streamlit* {
+        reverse_proxy 127.0.0.1:8501 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # FastAPI Quantitative Engine & Auth APIs
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # SPA client-side routing fallback
+    try_files {path} /index.html
+}
+
+# ------------------------------------------------------------------------------
+# 2. Custom Domain Listener (Automated TLS via Let's Encrypt / ZeroSSL)
+# Set your domain in /etc/caddy/Caddyfile or via environment variable DOMAIN
+# ------------------------------------------------------------------------------
+{$DOMAIN:quant.nexus.io} {
+    # Automatic TLS & HTTP->HTTPS redirect is handled natively by Caddy
+
+    # Serve compiled React SPA
+    root * /opt/nexus/dpp/frontend/dist
+    file_server
+
+    # Yjs Multiplayer WebSocket Server
+    handle /yjs-ws* {
+        reverse_proxy 127.0.0.1:1234 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # Streamlit Executive Dashboard
+    handle_path /streamlit* {
+        reverse_proxy 127.0.0.1:8501 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # FastAPI Quantitative Engine & Auth APIs
+    handle /api/* {
+        reverse_proxy 127.0.0.1:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # SPA client-side routing fallback
+    try_files {path} /index.html
+}

@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@y/websocket-server": "^0.1.5",
     "y-websocket": "3.1.0",
     "yjs": "13.6.33"
   }
