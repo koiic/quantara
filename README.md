@@ -103,6 +103,19 @@ It bridges the gap between interactive Python research notebooks, high-frequency
 - **Share Modal & Direct Link Generator:** Generates `http://<host>/?notebook=<id>` direct links and manages team invites by email or username.
 - **Multiplayer CRDT Sync:** Real-time multi-user cursor tracking, awareness avatars, and collaborative editing via Yjs (`y-websocket`).
 
+### 11. Staging Layer: Paper Trading & Canary Shadow Execution
+- **Dual Staging Modes:**
+  - **`PAPER` (Sandbox Simulator):** Virtual capital ledger ($100,000 USD / 375,000 SAR) with realistic execution fills, multi-currency accounting, and venue friction (Tadawul 15.5 bps + 15% VAT, US Equities 1 bps, Crypto 7.5 bps).
+  - **`SHADOW` (Dark Canary Mirror):** Zero-capital staging execution. Intercepts live algorithmic signals, checks against real-time Level 2 order book depth, calculates non-linear market impact (Almgren-Chriss quadratic slippage model), measures network latency, and logs execution forensics without financial exposure.
+- **Execution Provider Registry & Smart Fallback:**
+  - `quantara_virtual`: Sub-millisecond internal matching engine (< 2ms).
+  - `tadawul_fix_sandbox`: Saudi Tadawul FIX Protocol staging gateway with AST market hours.
+  - `interactive_brokers_paper`: IBKR TWS/Gateway paper account for NYSE, NASDAQ, and US Equities.
+  - `binance_testnet`: Real-time WebSocket testnet for crypto spot and futures.
+  - `live_broker_fix`: Institutional prime broker DMA. If disconnected, automatically reroutes to Shadow Canary staging with explicit attribution.
+- **Python Kernel SDK (`import quantara as qtr`):** Programmatic paper and shadow trade execution directly from interactive Jupyter notebook cells.
+- **Forensic Shadow Diagnostics:** Production Readiness Score (0-100), theoretical execution drag (bps), venue latency histograms, and multi-venue routing distribution.
+
 ---
 
 ## 🚀 Quick Start (Local Development)

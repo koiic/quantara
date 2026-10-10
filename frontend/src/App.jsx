@@ -14,7 +14,7 @@ import {
   CalendarClock, Clock, X, CheckCircle2, XCircle, 
   Table as TableIcon, FileSpreadsheet, LayoutDashboard,
   ExternalLink, Sparkles, GitBranch, ShieldAlert, Sliders,
-  Printer, Zap, Cpu
+  Printer, Zap, Cpu, Layers
 } from 'lucide-react';
 import './index.css';
 
@@ -26,6 +26,7 @@ import ExecutiveBriefingModal from './components/ExecutiveBriefingModal';
 import VersionControlDrawer from './components/VersionControlDrawer';
 import RiskSentinelView from './components/RiskSentinelView';
 import DRLStudioView from './components/DRLStudioView';
+import StagingShadowView from './components/StagingShadowView';
 import ShareNotebookModal from './components/ShareNotebookModal';
 import { API_URL, getYjsWsUrl, getStreamlitUrl } from './config';
 
@@ -873,6 +874,13 @@ export default function App() {
               >
                 <Cpu size={13} color="#10b981" /> DRL Studio
               </button>
+              <button 
+                className={`view-mode-btn ${viewMode === 'staging_shadow' ? 'active' : ''}`}
+                onClick={() => setViewMode('staging_shadow')}
+                title="Paper Trading & Shadow Dark-Launch Execution Staging"
+              >
+                <Layers size={13} color="#38bdf8" /> Staging & Shadow
+              </button>
             </div>
 
 
@@ -1020,6 +1028,8 @@ export default function App() {
           <RiskSentinelView token={token} />
         ) : viewMode === 'drl_studio' ? (
           <DRLStudioView token={token} onInsertCell={handleInsertCell} />
+        ) : viewMode === 'staging_shadow' ? (
+          <StagingShadowView token={token} />
         ) : (
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {activeNotebook ? (

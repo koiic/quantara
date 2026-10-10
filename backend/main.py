@@ -20,6 +20,7 @@ from drl_preprocessor import router as drl_preprocess_router
 from drl_backtester import router as drl_backtest_router
 from drl_pipeline import router as drl_pipeline_router
 from notebooks_api import router as notebooks_router
+from shadow_paper_engine import router as trading_router
 import asyncio
 
 app = FastAPI(title=settings.app_name)
@@ -34,6 +35,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(notebooks_router)
+app.include_router(trading_router)
 app.include_router(scheduler_router)
 app.include_router(datalake_router)
 app.include_router(streamlit_router)

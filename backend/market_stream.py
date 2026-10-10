@@ -6,13 +6,27 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 
 router = APIRouter(prefix="/api/market", tags=["market"])
 
-# Base prices for assets
+# Base prices for assets across multi-market venues (Crypto, US Equities, Saudi Tadawul, Macro/FX)
 ASSETS = {
-    "BTC-USD": {"base": 68450.0, "tick": 0.5, "step": 15.0, "name": "Bitcoin"},
-    "ETH-USD": {"base": 3520.0, "tick": 0.1, "step": 2.5, "name": "Ethereum"},
-    "SOL-USD": {"base": 182.4, "tick": 0.05, "step": 0.4, "name": "Solana"},
-    "SPX": {"base": 5860.0, "tick": 0.25, "step": 1.2, "name": "S&P 500"},
-    "US10Y": {"base": 4.18, "tick": 0.01, "step": 0.005, "name": "US 10Y Yield"},
+    # Crypto
+    "BTC-USD": {"base": 68450.0, "tick": 0.5, "step": 15.0, "name": "Bitcoin", "category": "crypto", "currency": "USD", "venue": "binance_testnet"},
+    "ETH-USD": {"base": 3520.0, "tick": 0.1, "step": 2.5, "name": "Ethereum", "category": "crypto", "currency": "USD", "venue": "binance_testnet"},
+    "SOL-USD": {"base": 182.4, "tick": 0.05, "step": 0.4, "name": "Solana", "category": "crypto", "currency": "USD", "venue": "binance_testnet"},
+    
+    # Saudi Tadawul Equities (SAR)
+    "2222.SR": {"base": 27.80, "tick": 0.05, "step": 0.10, "name": "Saudi Aramco", "category": "stock", "currency": "SAR", "venue": "tadawul_fix_sandbox"},
+    "1120.SR": {"base": 84.50, "tick": 0.10, "step": 0.25, "name": "Al Rajhi Bank", "category": "stock", "currency": "SAR", "venue": "tadawul_fix_sandbox"},
+    "2010.SR": {"base": 72.10, "tick": 0.10, "step": 0.20, "name": "SABIC Industries", "category": "stock", "currency": "SAR", "venue": "tadawul_fix_sandbox"},
+    
+    # US Equities (USD)
+    "NVDA": {"base": 138.25, "tick": 0.01, "step": 0.45, "name": "NVIDIA Corp", "category": "stock", "currency": "USD", "venue": "interactive_brokers_paper"},
+    "AAPL": {"base": 227.50, "tick": 0.01, "step": 0.35, "name": "Apple Inc", "category": "stock", "currency": "USD", "venue": "interactive_brokers_paper"},
+    "MSFT": {"base": 418.30, "tick": 0.01, "step": 0.60, "name": "Microsoft Corp", "category": "stock", "currency": "USD", "venue": "interactive_brokers_paper"},
+    
+    # Macro & FX
+    "SPX": {"base": 5860.0, "tick": 0.25, "step": 1.2, "name": "S&P 500", "category": "index", "currency": "USD", "venue": "interactive_brokers_paper"},
+    "EUR/USD": {"base": 1.0850, "tick": 0.0001, "step": 0.0003, "name": "Euro / USD", "category": "fx", "currency": "USD", "venue": "interactive_brokers_paper"},
+    "US10Y": {"base": 4.18, "tick": 0.01, "step": 0.005, "name": "US 10Y Yield", "category": "rates", "currency": "USD", "venue": "interactive_brokers_paper"},
 }
 
 _current_prices = {k: v["base"] for k, v in ASSETS.items()}
@@ -20,9 +34,25 @@ _24h_changes = {
     "BTC-USD": 2.45,
     "ETH-USD": 1.82,
     "SOL-USD": -0.92,
+    "2222.SR": 0.54,
+    "1120.SR": 1.15,
+    "2010.SR": -0.42,
+    "NVDA": 3.82,
+    "AAPL": 0.95,
+    "MSFT": 1.20,
     "SPX": 0.65,
+    "EUR/USD": -0.12,
     "US10Y": -0.04
 }
+
+def get_latest_price(symbol: str) -> float:
+    asset_cfg = ASSETS.get(symbol, ASSETS.get("BTC-USD"))
+    curr = _current_prices.get(symbol, asset_cfg["base"])
+    # slight organic drift
+    drift = random.gauss(0, asset_cfg["step"] * 0.05)
+    new_price = round(curr + drift, 4 if asset_cfg["tick"] < 0.01 else 2)
+    _current_prices[symbol] = new_price
+    return new_price
 
 def generate_l2_depth(symbol: str = "BTC-USD") -> Dict:
     asset_cfg = ASSETS.get(symbol, ASSETS["BTC-USD"])
@@ -89,11 +119,14 @@ async def get_market_ticker():
         tickers.append({
             "symbol": sym,
             "name": cfg["name"],
+            "category": cfg.get("category", "crypto"),
+            "currency": cfg.get("currency", "USD"),
+            "venue": cfg.get("venue", "internal"),
             "price": price,
             "change_24h": chg,
-            "high_24h": round(price * 1.025, 2),
-            "low_24h": round(price * 0.978, 2),
-            "funding_rate": "0.0100%" if "USD" in sym else "N/A"
+            "high_24h": round(price * 1.025, 4 if cfg["tick"] < 0.01 else 2),
+            "low_24h": round(price * 0.978, 4 if cfg["tick"] < 0.01 else 2),
+            "funding_rate": "0.0100%" if cfg.get("category") == "crypto" else "N/A"
         })
     return {"status": "ok", "tickers": tickers, "timestamp": int(time.time() * 1000)}
 
