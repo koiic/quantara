@@ -1,11 +1,11 @@
 [Unit]
-Description=Nexus Quant Platform - Yjs Multiplayer CRDT WebSocket Server
+Description=Quantara Quant Platform - Yjs Multiplayer CRDT WebSocket Server
 After=network.target
 
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/opt/nexus/dpp/backend
+WorkingDirectory=/opt/quantara/dpp/backend
 ExecStart=/usr/bin/npx --yes y-websocket
 Restart=always
 RestartSec=3

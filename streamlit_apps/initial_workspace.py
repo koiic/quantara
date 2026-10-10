@@ -7,11 +7,11 @@ import os
 
 st.set_page_config(page_title='Initial Workspace', layout='wide')
 st.title('Initial Workspace')
-st.markdown('*Generated directly from Nexus Notebook for Stakeholders & Executive Presentation*')
+st.markdown('*Generated directly from Quantara Notebook for Stakeholders & Executive Presentation*')
 st.markdown('---')
 
-st.markdown("""# Welcome to Nexus
+st.markdown("""# Welcome to Quantara
 Select a template from the sidebar or click **+ Code Block** below to begin.""")
 
 # --- Cell 2 ---
-print("Nexus Python kernel initialized.")
+print("Quantara Python kernel initialized.")

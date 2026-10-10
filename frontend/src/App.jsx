@@ -31,7 +31,7 @@ import { API_URL, getYjsWsUrl, getStreamlitUrl } from './config';
 
 // Global Yjs setup for CRDT multiplayer synchronization
 const ydoc = new Y.Doc();
-const wsProvider = new WebsocketProvider(getYjsWsUrl(), 'nexus-workspace', ydoc);
+const wsProvider = new WebsocketProvider(getYjsWsUrl(), 'quantara-workspace', ydoc);
 const yState = ydoc.getMap('shared-state');
 
 marked.setOptions({
@@ -48,7 +48,7 @@ const TEMPLATES = [
       {
         id: 'drl-c0',
         type: 'markdown',
-        content: '# Autonomous DRL Agent: End-to-End Trading Pipeline\nThis interactive notebook guides a **Deep Learning / Reinforcement Learning Engineer** through the institutional quantitative lifecycle:\n1. **Multi-Market Harmonization:** Saudi Tadawul (TASI Sun-Thu), Brent Crude, US Equity, and FX.\n2. **State Space Feature Engineering:** Marcos López de Prado memory-preserving Fractional Differencing ($d=0.45$).\n3. **Environment Setup:** Standardized `NexusTradingEnv` (`gymnasium.Env`) with Differential Sharpe reward.\n4. **Baseline Training:** Actor-Critic policy gradient rollout.\n5. **Execution Backtest:** Almgren-Chriss non-linear slippage + Tadawul 15.5 bps + 15% VAT friction.\n6. **Policy Diagnostic & CTO Briefing:** Action entropy audit & tear sheet generation.'
+        content: '# Autonomous DRL Agent: End-to-End Trading Pipeline\nThis interactive notebook guides a **Deep Learning / Reinforcement Learning Engineer** through the institutional quantitative lifecycle:\n1. **Multi-Market Harmonization:** Saudi Tadawul (TASI Sun-Thu), Brent Crude, US Equity, and FX.\n2. **State Space Feature Engineering:** Marcos López de Prado memory-preserving Fractional Differencing ($d=0.45$).\n3. **Environment Setup:** Standardized `QuantaraTradingEnv` (`gymnasium.Env`) with Differential Sharpe reward.\n4. **Baseline Training:** Actor-Critic policy gradient rollout.\n5. **Execution Backtest:** Almgren-Chriss non-linear slippage + Tadawul 15.5 bps + 15% VAT friction.\n6. **Policy Diagnostic & CTO Briefing:** Action entropy audit & tear sheet generation.'
       },
       {
         id: 'drl-c1',
@@ -63,7 +63,7 @@ const TEMPLATES = [
       {
         id: 'drl-c3',
         type: 'code',
-        content: '# Step 3: Vectorized Gymnasium Environment Definition\nimport gymnasium as gym\nfrom gymnasium import spaces\n\nclass NexusTradingEnv(gym.Env):\n    def __init__(self, df, commission_bps=15.5, vat_pct=15.0):\n        super().__init__()\n        self.df = df\n        self.effective_fee = (commission_bps / 10000.0) * (1.0 + vat_pct / 100.0)\n        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(1,), dtype=np.float32)\n        self.observation_space = spaces.Box(low=-5.0, high=5.0, shape=(4,), dtype=np.float32)\n        self.reset()\n\n    def reset(self):\n        self.step_idx = 0\n        self.position = 0.0\n        self.equity = 1_000_000.0\n        self.A = 0.0\n        self.B = 0.0\n        return self._get_obs(), {}\n\n    def _get_obs(self):\n        row = self.df.iloc[self.step_idx]\n        return np.array([row["frac_diff_price"], row["brent_crude"], row["ofi"], self.position], dtype=np.float32)\n\n    def step(self, action):\n        target_w = float(np.clip(action[0], -1.0, 1.0))\n        turnover = abs(target_w - self.position)\n        fee = turnover * self.effective_fee\n        \n        ret = np.random.normal(0.0006, 0.012)\n        step_pnl = (self.position * ret) - fee\n        self.equity *= (1.0 + step_pnl)\n        self.position = target_w\n\n        # Differential Sharpe Reward (Moody & Saffell)\n        eta = 0.05\n        delta_A = step_pnl - self.A\n        delta_B = step_pnl**2 - self.B\n        D = self.B - self.A**2\n        reward = (step_pnl - 0.5 * eta * self.A - eta * self.B * step_pnl) / (D**1.5) if D > 1e-6 else step_pnl\n        self.A += eta * delta_A\n        self.B += eta * delta_B\n\n        self.step_idx += 1\n        terminated = self.step_idx >= len(self.df) - 1\n        return self._get_obs(), reward, terminated, False, {"equity": self.equity, "pnl": step_pnl}\n\nenv = NexusTradingEnv(df_market)\nobs, _ = env.reset()\nprint("NexusTradingEnv instantiated. Initial State Vector:", obs)'
+        content: '# Step 3: Vectorized Gymnasium Environment Definition\nimport gymnasium as gym\nfrom gymnasium import spaces\n\nclass QuantaraTradingEnv(gym.Env):\n    def __init__(self, df, commission_bps=15.5, vat_pct=15.0):\n        super().__init__()\n        self.df = df\n        self.effective_fee = (commission_bps / 10000.0) * (1.0 + vat_pct / 100.0)\n        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(1,), dtype=np.float32)\n        self.observation_space = spaces.Box(low=-5.0, high=5.0, shape=(4,), dtype=np.float32)\n        self.reset()\n\n    def reset(self):\n        self.step_idx = 0\n        self.position = 0.0\n        self.equity = 1_000_000.0\n        self.A = 0.0\n        self.B = 0.0\n        return self._get_obs(), {}\n\n    def _get_obs(self):\n        row = self.df.iloc[self.step_idx]\n        return np.array([row["frac_diff_price"], row["brent_crude"], row["ofi"], self.position], dtype=np.float32)\n\n    def step(self, action):\n        target_w = float(np.clip(action[0], -1.0, 1.0))\n        turnover = abs(target_w - self.position)\n        fee = turnover * self.effective_fee\n        \n        ret = np.random.normal(0.0006, 0.012)\n        step_pnl = (self.position * ret) - fee\n        self.equity *= (1.0 + step_pnl)\n        self.position = target_w\n\n        # Differential Sharpe Reward (Moody & Saffell)\n        eta = 0.05\n        delta_A = step_pnl - self.A\n        delta_B = step_pnl**2 - self.B\n        D = self.B - self.A**2\n        reward = (step_pnl - 0.5 * eta * self.A - eta * self.B * step_pnl) / (D**1.5) if D > 1e-6 else step_pnl\n        self.A += eta * delta_A\n        self.B += eta * delta_B\n\n        self.step_idx += 1\n        terminated = self.step_idx >= len(self.df) - 1\n        return self._get_obs(), reward, terminated, False, {"equity": self.equity, "pnl": step_pnl}\n\nenv = QuantaraTradingEnv(df_market)\nobs, _ = env.reset()\nprint("QuantaraTradingEnv instantiated. Initial State Vector:", obs)'
       },
       {
         id: 'drl-c4',
@@ -159,7 +159,7 @@ const TEMPLATES = [
 ];
 
 export default function App() {
-  const [token, setToken] = useState(localStorage.getItem('nexus_token'));
+  const [token, setToken] = useState(localStorage.getItem('quantara_token') || localStorage.getItem('nexus_token'));
   const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notebooks, setNotebooks] = useState([]);
@@ -195,6 +195,7 @@ export default function App() {
       .then(res => setUser(res.data))
       .catch(() => {
         setToken(null);
+        localStorage.removeItem('quantara_token');
         localStorage.removeItem('nexus_token');
       });
     }
@@ -343,7 +344,7 @@ export default function App() {
     }
 
     yState.set('notebooks', JSON.stringify(notebooks));
-    localStorage.setItem('nexus_notebooks_v3', JSON.stringify(notebooks));
+    localStorage.setItem('quantara_notebooks_v3', JSON.stringify(notebooks));
 
     try {
       await axios.put(`${API_URL}/api/notebooks/${currentNb.id}`, {
@@ -565,7 +566,7 @@ export default function App() {
       const res = await axios.post(`${API_URL}/api/auth/token`, formData, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
-      localStorage.setItem('nexus_token', res.data.access_token);
+      localStorage.setItem('quantara_token', res.data.access_token);
       setToken(res.data.access_token);
     } catch (err) {
       setAuthError("Incorrect username or password. (Try admin / admin or register a new account)");
@@ -591,7 +592,7 @@ export default function App() {
         full_name: fullName,
         email
       });
-      localStorage.setItem('nexus_token', res.data.access_token);
+      localStorage.setItem('quantara_token', res.data.access_token);
       setToken(res.data.access_token);
     } catch (err) {
       setAuthError(err.response?.data?.detail || "Registration failed. Try a different username or email.");
@@ -601,6 +602,7 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('quantara_token');
     localStorage.removeItem('nexus_token');
     setToken(null);
     setUser(null);
@@ -614,7 +616,7 @@ export default function App() {
             <div style={{ background: '#2563eb', color: 'white', borderRadius: '8px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Terminal size={18} />
             </div>
-            Nexus Quant Platform
+            Quantara Quant Platform
           </div>
 
           {/* Auth Tab Switcher */}
@@ -732,7 +734,7 @@ export default function App() {
           <div style={{ background: 'var(--accent-blue)', color: 'white', borderRadius: '6px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Terminal size={18} />
           </div>
-          Nexus Trading Hub
+          Quantara Trading Hub
         </div>
         
         <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '20px' }}>
@@ -1911,7 +1913,7 @@ function SchedulerModal({ token, activeNotebook, onClose }) {
                   </button>
                 </div>
               ) : (
-                <table className="nexus-table">
+                <table className="quantara-table">
                   <thead>
                     <tr>
                       <th>Job Name</th>
@@ -2154,7 +2156,7 @@ function DataLakeModal({ token, onInsertQuery, onClose }) {
                 </div>
               ) : previewData ? (
                 <div style={{ overflowX: 'auto', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
-                  <table className="nexus-table" style={{ margin: 0 }}>
+                  <table className="quantara-table" style={{ margin: 0 }}>
                     <thead>
                       <tr>
                         {previewData.columns.map((col, idx) => (
@@ -2186,7 +2188,7 @@ function DataLakeModal({ token, onInsertQuery, onClose }) {
                   No dataset files discovered in datalake/ directory yet.
                 </div>
               ) : (
-                <table className="nexus-table">
+                <table className="quantara-table">
                   <thead>
                     <tr>
                       <th>Dataset Name</th>

@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/reports", tags=["reports"])
 
 class GenerateReportRequest(BaseModel):
     title: str = "Alpha Momentum & Mean Reversion Tear Sheet"
-    author: Optional[str] = "Nexus Quant Lab"
+    author: Optional[str] = "Quantara Quant Lab"
     benchmark: Optional[str] = "S&P 500 / BTC Benchmark"
     annualized_return: Optional[float] = 34.8
     sharpe_ratio: Optional[float] = 2.42
@@ -43,7 +43,7 @@ def generate_tear_sheet_html(req: GenerateReportRequest, report_id: str, generat
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexus Executive Briefing - {req.title}</title>
+    <title>Quantara Executive Briefing - {req.title}</title>
     <style>
         body {{
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -182,7 +182,7 @@ def generate_tear_sheet_html(req: GenerateReportRequest, report_id: str, generat
     <div class="report-card">
         <div class="header">
             <div>
-                <div class="brand">NEXUS DATA PLATFORM</div>
+                <div class="brand">QUANTARA DATA PLATFORM</div>
                 <div class="sub-brand">Institutional Quantitative Tear Sheet</div>
             </div>
             <div class="report-meta">
@@ -267,7 +267,7 @@ def generate_tear_sheet_html(req: GenerateReportRequest, report_id: str, generat
         </table>
 
         <div style="font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 16px; text-align: center;">
-            Generated automatically by Nexus Quantitative Analytics Engine • Confidential and Proprietary
+            Generated automatically by Quantara Quantitative Analytics Engine • Confidential and Proprietary
         </div>
     </div>
 </body>
@@ -352,7 +352,7 @@ async def dispatch_slack_digest(req: SlackDispatchRequest, current_user: User = 
             {
                 "type": "context",
                 "elements": [
-                    {"type": "mrkdwn", "text": f"Nexus Execution Engine • Sent to `{req.channel}` at {time.strftime('%H:%M:%S UTC')}"}
+                    {"type": "mrkdwn", "text": f"Quantara Execution Engine • Sent to `{req.channel}` at {time.strftime('%H:%M:%S UTC')}"}
                 ]
             }
         ]

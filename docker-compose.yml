@@ -2,7 +2,7 @@ version: '3.8'
 services:
   minio:
     image: minio/minio
-    container_name: nexus-minio
+    container_name: quantara-minio
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -16,7 +16,7 @@ services:
   # Create default buckets automatically
   minio-create-buckets:
     image: minio/mc
-    container_name: nexus-minio-setup
+    container_name: quantara-minio-setup
     depends_on:
       - minio
     entrypoint: >

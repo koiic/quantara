@@ -1,5 +1,5 @@
 # ==============================================================================
-# NEXUS QUANT PLATFORM - PRODUCTION CADDY CONFIGURATION
+# QUANTARA QUANT PLATFORM - PRODUCTION CADDY CONFIGURATION
 # Supports both:
 # 1. Raw Public IP (e.g. http://195.201.x.x)
 # 2. Custom Domain with Automatic HTTPS / TLS (e.g. https://quant.firm.com)
@@ -16,7 +16,7 @@
 # ------------------------------------------------------------------------------
 :80 {
     # Serve compiled React SPA
-    root * /opt/nexus/dpp/frontend/dist
+    root * /opt/quantara/dpp/frontend/dist
     file_server
 
     # Yjs Multiplayer WebSocket Server
@@ -51,11 +51,11 @@
 # 2. Custom Domain Listener (Automated TLS via Let's Encrypt / ZeroSSL)
 # Set your domain in /etc/caddy/Caddyfile or via environment variable DOMAIN
 # ------------------------------------------------------------------------------
-{$DOMAIN:quant.nexus.io} {
+{$DOMAIN:quant.quantara.io} {
     # Automatic TLS & HTTP->HTTPS redirect is handled natively by Caddy
 
     # Serve compiled React SPA
-    root * /opt/nexus/dpp/frontend/dist
+    root * /opt/quantara/dpp/frontend/dist
     file_server
 
     # Yjs Multiplayer WebSocket Server

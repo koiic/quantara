@@ -9,7 +9,7 @@ import { API_URL } from '../config';
 
 export default function ExecutiveBriefingModal({ isOpen, onClose, token, activeNotebook }) {
   const [title, setTitle] = useState(activeNotebook ? `${activeNotebook.title} Tear Sheet` : 'Alpha Momentum Tear Sheet');
-  const [author, setAuthor] = useState('Nexus Quantitative Team');
+  const [author, setAuthor] = useState('Quantara Quantitative Team');
   const [annReturn, setAnnReturn] = useState(34.8);
   const [sharpe, setSharpe] = useState(2.42);
   const [maxDd, setMaxDd] = useState(-8.6);

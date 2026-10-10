@@ -7,7 +7,7 @@ import os
 
 st.set_page_config(page_title='Bollinger Signal Strategy', layout='wide')
 st.title('Bollinger Signal Strategy')
-st.markdown('*Generated directly from Nexus Notebook for Stakeholders & Executive Presentation*')
+st.markdown('*Generated directly from Quantara Notebook for Stakeholders & Executive Presentation*')
 st.markdown('---')
 
 st.markdown("""# Alpha Strategy

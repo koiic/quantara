@@ -71,7 +71,7 @@ def test_flow():
         "username": "lead_quant",
         "password": "quant_password_123",
         "full_name": "Lead Quant Dr. Sarah",
-        "email": "sarah@nexustrading.com"
+        "email": "sarah@quantaratrading.com"
     })
     if status == 400 and "already registered" in res.get("detail", ""):
         print("Lead quant already exists, logging in instead...")
@@ -90,7 +90,7 @@ def test_flow():
         "username": "junior_alex",
         "password": "alex_password_123",
         "full_name": "Alex Smith",
-        "email": "alex@nexustrading.com"
+        "email": "alex@quantaratrading.com"
     })
     if status == 400 and "already registered" in res.get("detail", ""):
         data = urllib.parse.urlencode({"username": "junior_alex", "password": "alex_password_123"}).encode()

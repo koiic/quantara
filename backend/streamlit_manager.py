@@ -153,7 +153,7 @@ async def generate_app_from_notebook(req: GenerateAppRequest, current_user: User
         "",
         f"st.set_page_config(page_title='{req.notebook_title}', layout='wide')",
         f"st.title('{req.notebook_title}')",
-        "st.markdown('*Generated directly from Nexus Notebook for Stakeholders & Executive Presentation*')",
+        "st.markdown('*Generated directly from Quantara Notebook for Stakeholders & Executive Presentation*')",
         "st.markdown('---')",
         ""
     ]

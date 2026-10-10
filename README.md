@@ -1,4 +1,4 @@
-# Nexus Quantitative & Autonomous DRL Trading Platform
+# Quantara Quantitative & Autonomous DRL Trading Platform
 
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi)](https://fastapi.tiangolo.com)
@@ -6,7 +6,7 @@
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-1.0+-brightgreen)](https://gymnasium.farama.org)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](#)
 
-Nexus is an institutional quantitative research, multi-market data engineering, and autonomous Deep Reinforcement Learning (DRL) pre/post-processing platform designed for algorithmic trading firms, quantitative funds, and AI research teams.
+Quantara (قنطرة — *The Arch / Bridge*) is an institutional quantitative research, multi-market data engineering, and autonomous Deep Reinforcement Learning (DRL) pre/post-processing platform designed for algorithmic trading firms, quantitative funds, and AI research teams.
 
 It bridges the gap between interactive Python research notebooks, high-frequency execution backtesting, and stakeholder executive reporting (Streamlit), with real-time multiplayer collaboration, Git-like strategy version control, and granular role-based access control (`OWNER`, `EDITOR`, `VIEWER`).
 
@@ -53,7 +53,7 @@ It bridges the gap between interactive Python research notebooks, high-frequency
 ### 2. Autonomous DRL Engine & Quant Studio
 - **Multi-Market Harmonization:** Vectorized alignment of heterogeneous market sessions across Saudi Tadawul (TASI Sun–Thu), US Equities (NYSE/NASDAQ), Brent Crude, and FX.
 - **Feature Engineering & Stationarity:** Marcos López de Prado memory-preserving Fractional Differencing ($d=0.45$), Microstructure Order Flow Imbalance (OFI), and Volume-Synchronized Probability of Toxicity (VPIN).
-- **Vectorized Gymnasium Environment (`NexusTradingEnv`):** Standardized observation vector, continuous action sizing $[-1.0, 1.0]$, Differential Sharpe ratio reward formulation (Moody & Saffell), and venue friction accounting (Tadawul 15.5 bps broker fee + 15% VAT, Almgren-Chriss non-linear slippage).
+- **Vectorized Gymnasium Environment (`QuantaraTradingEnv`):** Standardized observation vector, continuous action sizing $[-1.0, 1.0]$, Differential Sharpe ratio reward formulation (Moody & Saffell), and venue friction accounting (Tadawul 15.5 bps broker fee + 15% VAT, Almgren-Chriss non-linear slippage).
 - **Policy Behavioral Audit:** Shannon Action Entropy distribution auditor detecting policy inertia or action collapse.
 - **CTO Executive Tear Sheet Generator:** 1-Click generation of PDF/HTML tear sheets displaying equity curves, Sharpe ratio, Sortino, Calmar, Max Drawdown, and Value at Risk (VaR).
 
@@ -115,8 +115,8 @@ It bridges the gap between interactive Python research notebooks, high-frequency
 ### 1-Click Local Launch
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/nexus-quant-platform.git
-cd nexus-quant-platform/dpp
+git clone https://github.com/your-org/quantara-quant-platform.git
+cd quantara-quant-platform/dpp
 
 # Run all services concurrently (FastAPI, React, Streamlit, Yjs)
 ./start_all.sh
@@ -131,7 +131,7 @@ Navigate to `http://localhost:5173`.
 
 ## 🌐 Production Deployment (Option A: Native Systemd + Caddy)
 
-Nexus is optimized for native host execution without Docker memory overhead, allowing a low-cost VPS (< €8/month) to comfortably host concurrent quants, Jupyter kernels, and Streamlit.
+Quantara is optimized for native host execution without Docker memory overhead, allowing a low-cost VPS (< €8/month) to comfortably host concurrent quants, Jupyter kernels, and Streamlit.
 
 ### Recommended VPS:
 * **Top Pick:** **Hetzner Cloud CPX21** (€7.05/mo, 3 vCPUs AMD Milan, 4 GB RAM, 80 GB NVMe SSD).
@@ -142,9 +142,9 @@ Nexus is optimized for native host execution without Docker memory overhead, all
 # 1. SSH into your VPS as root
 ssh root@<YOUR_VPS_IP>
 
-# 2. Clone repository to /opt/nexus
-git clone https://github.com/your-org/nexus-quant-platform.git /opt/nexus
-cd /opt/nexus
+# 2. Clone repository to /opt/quantara
+git clone https://github.com/your-org/quantara-quant-platform.git /opt/quantara
+cd /opt/quantara
 
 # 3. Execute automated production deployer
 sudo bash dpp/deploy/deploy.sh

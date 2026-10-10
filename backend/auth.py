@@ -12,7 +12,7 @@ from database import get_user_by_username, create_user, get_user_by_email, init_
 init_db()
 
 # --- Security Config ---
-SECRET_KEY = "nexus_super_secret_key_for_auto_trading_mvp"
+SECRET_KEY = "quantara_super_secret_key_for_auto_trading_mvp"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 1 week
 

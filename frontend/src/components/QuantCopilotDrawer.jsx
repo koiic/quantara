@@ -86,7 +86,7 @@ export default function QuantCopilotDrawer({
             </div>
             <div>
               <div style={{ fontWeight: 600, fontSize: '15px', color: 'var(--text-main)' }}>
-                Nexus Quant AI Copilot
+                Quantara Quant AI Copilot
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 Institutional Strategy Synthesis & Pitfall Auditor

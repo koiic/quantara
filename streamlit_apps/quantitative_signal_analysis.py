@@ -7,7 +7,7 @@ import os
 
 st.set_page_config(page_title='Quantitative Signal Analysis', layout='wide')
 st.title('Quantitative Signal Analysis')
-st.markdown('*Generated directly from Nexus Notebook for Stakeholders & Executive Presentation*')
+st.markdown('*Generated directly from Quantara Notebook for Stakeholders & Executive Presentation*')
 st.markdown('---')
 
 st.markdown("""# BTC-USD Signal Strategy

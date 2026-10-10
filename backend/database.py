@@ -6,7 +6,15 @@ from typing import Optional, List, Dict
 import bcrypt
 
 DB_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(DB_DIR, "data", "nexus.db")
+DB_PATH = os.path.join(DB_DIR, "data", "quantara.db")
+
+# Seamless migration from legacy nexus.db if present
+legacy_path = os.path.join(DB_DIR, "data", "nexus.db")
+if os.path.exists(legacy_path) and not os.path.exists(DB_PATH):
+    try:
+        os.rename(legacy_path, DB_PATH)
+    except Exception:
+        pass
 
 def get_db_connection():
     os.makedirs(os.path.join(DB_DIR, "data"), exist_ok=True)
@@ -124,8 +132,8 @@ def init_db():
     if cursor.fetchone()[0] == 0:
         print("Seeding initial users into SQLite...")
         seed_users = [
-            ("admin", "admin", "Principal Architect", "admin@nexus.io", "admin"),
-            ("quant1", "quant123", "Quantitative Analyst", "quant1@nexus.io", "user")
+            ("admin", "admin", "Principal Architect", "admin@quantara.io", "admin"),
+            ("quant1", "quant123", "Quantitative Analyst", "quant1@quantara.io", "user")
         ]
         for uname, plain_pwd, fname, email, role in seed_users:
             salt = bcrypt.gensalt()

@@ -7,7 +7,7 @@ import os
 import duckdb
 
 st.set_page_config(
-    page_title="Nexus Quant — Executive Strategy Dashboard",
+    page_title="Quantara Quant — Executive Strategy Dashboard",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -37,7 +37,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Sidebar Controls ---
-st.sidebar.title("⚡ Nexus Controls")
+st.sidebar.title("⚡ Quantara Controls")
 st.sidebar.markdown("*Executive parameters for strategy evaluation*")
 
 selected_asset = st.sidebar.selectbox("Target Asset", ["BTC-USD", "ETH-USD", "SOL-USD"], index=0)
@@ -49,7 +49,7 @@ st.sidebar.subheader("💾 Data Lake Ingestion")
 data_source = st.sidebar.radio("Data Engine", ["DuckDB Parquet Lake", "Synthetic Tick Simulation"])
 
 # --- Header ---
-st.title("📈 Nexus Alpha: Executive Strategy & Risk Dashboard")
+st.title("📈 Quantara Alpha: Executive Strategy & Risk Dashboard")
 st.markdown(f"**Asset:** `{selected_asset}` | **Regime:** *Mean-Reversion with Adaptive Bollinger Bands* | **Data Lake Status:** 🟢 *Connected*")
 
 # --- Generate / Query Data ---
@@ -136,7 +136,7 @@ with tab1:
 
 with tab2:
     fig_perf = go.Figure()
-    fig_perf.add_trace(go.Scatter(x=df.index, y=df['Cumulative_Strategy'], name="Nexus Alpha Strategy", line=dict(color="#0f7b6c", width=2.5)))
+    fig_perf.add_trace(go.Scatter(x=df.index, y=df['Cumulative_Strategy'], name="Quantara Alpha Strategy", line=dict(color="#0f7b6c", width=2.5)))
     fig_perf.add_trace(go.Scatter(x=df.index, y=df['Cumulative_Benchmark'], name=f"{selected_asset} Buy & Hold", line=dict(color="#9ca3af", dash="dot", width=1.5)))
     fig_perf.update_layout(
         title="Strategy Performance vs Buy-and-Hold Benchmark",
@@ -156,7 +156,7 @@ with tab3:
         st.write(f"Displaying top 50 records from `{parquet_path}`:")
         st.dataframe(duck_df, use_container_width=True)
     else:
-        st.info("Run the Data Engineering template in the Nexus notebook to generate local Parquet data.")
+        st.info("Run the Data Engineering template in the Quantara notebook to generate local Parquet data.")
 
 st.markdown("---")
-st.caption("Nexus Data Platform | Powered by FastAPI, DuckDB, Yjs & Streamlit | Confidential Autonomous Trading Architecture")
+st.caption("Quantara Data Platform | Powered by FastAPI, DuckDB, Yjs & Streamlit | Confidential Autonomous Trading Architecture")

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting Nexus Data Platform..."
+echo "Starting Quantara Data Platform..."
 
 # 1. Start Backend (in background)
 echo "Starting FastAPI Backend..."
@@ -26,7 +26,7 @@ cd ..
 
 echo ""
 echo "=================================================="
-echo "Nexus is now running!"
+echo "Quantara is now running!"
 echo "UI: http://localhost:5173"
 echo "API: http://localhost:8000"
 echo "Default Credentials: admin / admin"

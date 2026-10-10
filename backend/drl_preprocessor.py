@@ -343,7 +343,7 @@ async def export_gymnasium_environment(req: ExportGymRequest, current_user: User
     spec = MARKET_SPECS.get(req.market_id, MARKET_SPECS["saudi_tasi"])
     
     gym_code = f'''"""
-Nexus Autonomous Trading Engine - Vectorized Gymnasium Environment
+Quantara Autonomous Trading Engine - Vectorized Gymnasium Environment
 Target Market: {spec["name"]} ({spec["currency"]})
 Session: {spec["trading_days"]} ({spec["open_time"]} - {spec["close_time"]} {spec["timezone"]})
 """
@@ -353,7 +353,7 @@ from gymnasium import spaces
 import numpy as np
 import pandas as pd
 
-class NexusTradingEnv(gym.Env):
+class QuantaraTradingEnv(gym.Env):
     metadata = {{"render_modes": ["human"], "target_venue": "{req.market_id}"}}
 
     def __init__(self, data_path="../datalake/processed/ohlcv.parquet", window_size={req.observation_window}):
@@ -420,9 +420,9 @@ class NexusTradingEnv(gym.Env):
 
 # --- Quick Test with Stable-Baselines3 ---
 if __name__ == "__main__":
-    env = NexusTradingEnv()
+    env = QuantaraTradingEnv()
     obs, _ = env.reset()
-    print("Nexus Gymnasium Environment initialized successfully for {spec['name']}.")
+    print("Quantara Gymnasium Environment initialized successfully for {spec['name']}.")
     print("Sample Observation Shape:", obs.shape)
     for _ in range(5):
         action = env.action_space.sample()
@@ -434,6 +434,6 @@ if __name__ == "__main__":
         "status": "ok",
         "market_id": req.market_id,
         "market_name": spec["name"],
-        "filename": "nexus_trading_env.py",
+        "filename": "quantara_trading_env.py",
         "gym_code": gym_code.strip()
     }

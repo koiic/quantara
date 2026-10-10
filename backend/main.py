@@ -67,7 +67,7 @@ async def startup_event():
         print(f"[Main] Warning: Could not start default Streamlit dashboard: {e}")
     # 5. Launch background real-time market depth loop
     market_stream_task = asyncio.create_task(broadcast_market_depth_loop())
-    print("Nexus Engine: All 5 Quant Feature Pillars, Streamlit, and Data Lake ready.")
+    print("Quantara Engine: All Quant Feature Pillars, Streamlit, and Data Lake ready.")
 
 @app.on_event("shutdown")
 async def shutdown_event():

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# NEXUS QUANT PLATFORM - AUTOMATED 1-CLICK PRODUCTION DEPLOYER
+# QUANTARA QUANT PLATFORM - AUTOMATED 1-CLICK PRODUCTION DEPLOYER
 # Target OS: Ubuntu 22.04 / 24.04 LTS, Debian 12
 # Recommended VPS: Hetzner Cloud CPX21 (€7.05/mo, 3 vCPUs AMD, 4 GB RAM)
 # ==============================================================================
@@ -8,7 +8,7 @@
 set -e
 
 echo "=========================================================="
-echo "  🚀 Starting Nexus Platform Production Deployment"
+echo "  🚀 Starting Quantara Platform Production Deployment"
 echo "=========================================================="
 
 if [ "$EUID" -ne 0 ]; then
@@ -18,7 +18,7 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-TARGET_DIR="/opt/nexus"
+TARGET_DIR="/opt/quantara"
 
 # 1. Install System Dependencies & Caddy Web Server
 echo "[1/6] Updating APT & Installing System Prerequisites..."
@@ -68,13 +68,13 @@ npm run build
 
 # 5. Install Systemd Services
 echo "[5/6] Registering Systemd Units..."
-cp "${TARGET_DIR}/dpp/deploy/systemd/nexus-backend.service" /etc/systemd/system/
-cp "${TARGET_DIR}/dpp/deploy/systemd/nexus-yjs.service" /etc/systemd/system/
-cp "${TARGET_DIR}/dpp/deploy/systemd/nexus-streamlit.service" /etc/systemd/system/
+cp "${TARGET_DIR}/dpp/deploy/systemd/quantara-backend.service" /etc/systemd/system/
+cp "${TARGET_DIR}/dpp/deploy/systemd/quantara-yjs.service" /etc/systemd/system/
+cp "${TARGET_DIR}/dpp/deploy/systemd/quantara-streamlit.service" /etc/systemd/system/
 
 systemctl daemon-reload
-systemctl enable nexus-backend nexus-yjs nexus-streamlit
-systemctl restart nexus-backend nexus-yjs nexus-streamlit
+systemctl enable quantara-backend quantara-yjs quantara-streamlit
+systemctl restart quantara-backend quantara-yjs quantara-streamlit
 
 # 6. Configure Reverse Proxy
 echo "[6/6] Configuring Caddy Reverse Proxy..."
@@ -85,7 +85,7 @@ PUBLIC_IP=$(curl -s --max-time 3 ifconfig.me || hostname -I | awk '{print $1}')
 
 echo ""
 echo "=========================================================="
-echo "  ✅ Nexus Quant Platform Deployed Successfully!"
+echo "  ✅ Quantara Quant Platform Deployed Successfully!"
 echo "=========================================================="
 echo "  Public IP Access:      http://${PUBLIC_IP}"
 echo "  FastAPI Docs:          http://${PUBLIC_IP}/api/docs"
@@ -93,6 +93,6 @@ echo "  Executive Studio:      http://${PUBLIC_IP}/streamlit"
 echo ""
 echo "  Custom Domain Setup:"
 echo "  1. Point an A record (e.g. quant.yourfirm.com) to ${PUBLIC_IP}"
-echo "  2. Edit /etc/caddy/Caddyfile and replace 'quant.nexus.io' with your domain"
+echo "  2. Edit /etc/caddy/Caddyfile and replace 'quant.quantara.io' with your domain"
 echo "  3. Run: systemctl reload caddy (Automatic HTTPS issued in 5s)"
 echo "=========================================================="

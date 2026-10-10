@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import math
 
-st.set_page_config(page_title="Nexus DRL Quant Studio", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Quantara DRL Quant Studio", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
 <style>
@@ -23,7 +23,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🧠 Nexus DRL Studio: Pre-Processing & Execution Backtester")
+st.title("🧠 Quantara DRL Studio: Pre-Processing & Execution Backtester")
 st.caption("Deep Reinforcement Learning Pipeline for Multi-Market Autonomous Trading (Saudi Tadawul, US, Europe, FX)")
 
 # --- Sidebar Configuration ---

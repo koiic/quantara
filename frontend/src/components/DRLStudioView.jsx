@@ -490,7 +490,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>
-                    Export Standardized Gymnasium Environment (`nexus_trading_env.py`)
+                    Export Standardized Gymnasium Environment (`quantara_trading_env.py`)
                   </div>
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                     Ready-to-train vectorized Python environment compatible with Stable-Baselines3 (PPO/SAC) or Ray RLlib.
