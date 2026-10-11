@@ -14,7 +14,7 @@ import {
   CalendarClock, Clock, X, CheckCircle2, XCircle, 
   Table as TableIcon, FileSpreadsheet, LayoutDashboard,
   ExternalLink, Sparkles, GitBranch, ShieldAlert, Sliders,
-  Printer, Zap, Cpu, Layers, Globe
+  Printer, Zap, Cpu, Layers, Globe, Maximize2, Minimize2
 } from 'lucide-react';
 import './index.css';
 
@@ -1244,6 +1244,7 @@ function NotebookView({
   const cellRunRefs = useRef({});
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [dragPosition, setDragPosition] = useState(null);
+  const [allExpanded, setAllExpanded] = useState(false);
 
   const updateTitle = (newTitle) => {
     updateNotebook({ ...notebook, title: newTitle });
@@ -1342,6 +1343,18 @@ function NotebookView({
             <span className="btn-hide-mobile">Streamlit</span>
           </button>
 
+          {/* Expand All / Compact All Code Blocks */}
+          {!presentationMode && (
+            <button 
+              className={`btn-secondary ${allExpanded ? 'active' : ''}`}
+              onClick={() => setAllExpanded(!allExpanded)}
+              title={allExpanded ? "Collapse code cells to compact height" : "Expand all code cells to view full code at once without scrolling"}
+            >
+              {allExpanded ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+              <span className="btn-hide-mobile">{allExpanded ? "Compact All" : "Expand All Code"}</span>
+            </button>
+          )}
+
           {!presentationMode && !isViewer && (
             <>
               <button className="btn-secondary" onClick={handleRunAll} title="Run all code cells sequentially">
@@ -1356,7 +1369,7 @@ function NotebookView({
       </div>
 
       {/* Cells List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {notebook.cells.map((cell, index) => (
           <Cell 
             key={cell.id} 
@@ -1367,6 +1380,7 @@ function NotebookView({
             token={token}
             presentationMode={presentationMode}
             isViewer={isViewer}
+            globalExpanded={allExpanded}
             isKernelBusy={kernelStatus.state === 'busy'}
             onInterruptKernel={onInterruptKernel}
             registerRunHandler={(runFn) => { cellRunRefs.current[cell.id] = runFn; }}
@@ -1393,7 +1407,7 @@ function NotebookView({
       </div>
 
       {!presentationMode && !isViewer && (
-        <div style={{ marginTop: '20px', marginLeft: '40px', display: 'flex', gap: '8px' }}>
+        <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
           <button className="add-block-btn" onClick={() => addCell(notebook.cells.length, 'code')}>
             <Plus size={16} /> Code Block
           </button>
@@ -1414,6 +1428,7 @@ function Cell({
   token, 
   presentationMode,
   isViewer = false,
+  globalExpanded = false,
   onInterruptKernel,
   registerRunHandler, 
   onUpdate, 
@@ -1433,10 +1448,26 @@ function Cell({
   const [isMarkdownEditing, setIsMarkdownEditing] = useState(!cell.content || cell.content.trim() === '');
   const [outputCollapsed, setOutputCollapsed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [customHeight, setCustomHeight] = useState(null);
+  const [isResizing, setIsResizing] = useState(false);
+  
+  const editorInstanceRef = useRef(null);
+  const resizeStartY = useRef(0);
+  const resizeStartH = useRef(0);
   const runHandlerRef = useRef(null);
 
   const cellType = cell.type || 'code';
 
+  // Sync with global expanded state
+  useEffect(() => {
+    setIsExpanded(globalExpanded);
+    if (globalExpanded) {
+      setCustomHeight(null);
+    }
+  }, [globalExpanded]);
+
+  // Clean output listener
   useEffect(() => {
     const handleClear = () => setOutput([]);
     window.addEventListener(`clear-outputs-${sessionId}`, handleClear);
@@ -1492,6 +1523,67 @@ function Cell({
     }
   };
 
+  // Line count calculation
+  const lineCount = useMemo(() => {
+    return (cell.content || '').split('\n').length;
+  }, [cell.content]);
+
+  // Natural code height needed to display all lines without scrolling
+  const naturalCodeHeight = useMemo(() => {
+    // 21px per line + 24px internal padding
+    return Math.max(54, lineCount * 21 + 24);
+  }, [lineCount]);
+
+  // Target editor height
+  const editorTargetHeight = useMemo(() => {
+    if (customHeight !== null) {
+      return customHeight;
+    }
+    if (isExpanded) {
+      return naturalCodeHeight;
+    }
+    // Compact mode: short code fits snugly without blank space; long code is capped at 240px with smooth scroll
+    return Math.min(naturalCodeHeight, 240);
+  }, [customHeight, isExpanded, naturalCodeHeight]);
+
+  // Relayout Monaco whenever height changes
+  useEffect(() => {
+    if (editorInstanceRef.current) {
+      editorInstanceRef.current.layout();
+    }
+  }, [editorTargetHeight]);
+
+  // Drag-to-resize handle logic
+  const handleMouseDownResize = (e) => {
+    e.preventDefault();
+    setIsResizing(true);
+    resizeStartY.current = e.clientY;
+    resizeStartH.current = editorTargetHeight;
+
+    const handleMouseMove = (moveEv) => {
+      const deltaY = moveEv.clientY - resizeStartY.current;
+      const newH = Math.max(50, Math.min(3000, resizeStartH.current + deltaY));
+      setCustomHeight(newH);
+      if (editorInstanceRef.current) {
+        editorInstanceRef.current.layout();
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const toggleExpand = () => {
+    setCustomHeight(null);
+    setIsExpanded(!isExpanded);
+  };
+
   // If in Presentation Mode and code cell has no output, hide completely
   if (presentationMode && cellType === 'code' && output.length === 0) {
     return null;
@@ -1500,7 +1592,6 @@ function Cell({
   return (
     <div 
       className={`cell-wrapper ${isDragging ? 'is-dragging' : ''} ${dragOverState === 'top' ? 'drag-over-top' : ''} ${dragOverState === 'bottom' ? 'drag-over-bottom' : ''}`}
-      style={{ padding: presentationMode ? '2px 0' : '8px 4px' }}
       onDragOver={(e) => {
         if (presentationMode) return;
         e.preventDefault();
@@ -1519,84 +1610,133 @@ function Cell({
         clearDragOver();
       }}
     >
-      {/* Left Action Column */}
-      {!presentationMode && !isViewer && (
-        <div className="cell-drag-column" style={{ width: '36px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
-          <div 
-            className="cell-drag-handle" 
-            title="Drag to reorder cell"
-            draggable={true}
-            onDragStart={(e) => {
-              e.dataTransfer.setData('text/plain', index.toString());
-              setIsDragging(true);
-            }}
-            onDragEnd={() => {
-              setIsDragging(false);
-              clearDragOver();
-            }}
-          >
-            <GripVertical size={16} />
-          </div>
-          
-          {cellType === 'code' ? (
-            isRunning ? (
-              <button 
-                onClick={onInterruptKernel}
-                className="btn-icon"
-                style={{ marginTop: '4px', color: 'var(--accent-red)' }}
-                title="Interrupt execution"
-              >
-                <Square size={15} fill="currentColor" />
-              </button>
-            ) : (
-              <button 
-                onClick={handleRun}
-                disabled={isRunning}
-                className="btn-icon"
-                style={{ marginTop: '4px', color: 'var(--text-muted)' }}
-                title="Run Cell (Shift + Enter)"
-              >
-                <Play size={15} fill="currentColor" />
-              </button>
-            )
-          ) : (
-            <button 
-              onClick={() => setIsMarkdownEditing(!isMarkdownEditing)}
-              className="btn-icon"
-              style={{ marginTop: '4px', color: 'var(--text-muted)' }}
-              title={isMarkdownEditing ? "Preview Markdown" : "Edit Markdown"}
-            >
-              {isMarkdownEditing ? <Eye size={15} /> : <Edit3 size={15} />}
-            </button>
-          )}
-        </div>
-      )}
-      
-      {/* Cell Content */}
+      {/* Unified Cell Card */}
       <div className={`cell-content ${isFocused && !presentationMode ? 'focused' : ''}`}>
+        
+        {/* Cell Integrated Header Toolbar */}
         {!presentationMode && !isViewer && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 8px 2px' }}>
-            <button 
-              onClick={toggleCellType} 
-              className="cell-type-pill" 
-              title="Click to toggle between Code and Markdown block"
-            >
-              {cellType === 'code' ? (
-                <>
-                  <Code2 size={12} color="#2383e2" />
-                  <span>Python</span>
-                </>
-              ) : (
-                <>
-                  <AlignLeft size={12} color="#0f7b6c" />
-                  <span>Markdown</span>
-                </>
-              )}
-            </button>
+          <div className="cell-header-bar">
+            {/* Left Header: Drag Handle, Run/Edit, Index Badge, Type Pill */}
+            <div className="cell-header-left">
+              <div 
+                className="cell-drag-handle" 
+                title="Drag to reorder cell"
+                draggable={true}
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', index.toString());
+                  setIsDragging(true);
+                }}
+                onDragEnd={() => {
+                  setIsDragging(false);
+                  clearDragOver();
+                }}
+              >
+                <GripVertical size={14} />
+              </div>
 
-            {cellType === 'markdown' && !isMarkdownEditing && (
-              <span style={{ fontSize: '11px', color: 'var(--text-placeholder)' }}>Click to edit</span>
-            )}
+              {cellType === 'code' ? (
+                isRunning ? (
+                  <button 
+                    onClick={onInterruptKernel}
+                    className="cell-run-btn running"
+                    title="Interrupt kernel execution"
+                  >
+                    <Square size={11} fill="currentColor" />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={handleRun}
+                    disabled={isRunning}
+                    className="cell-run-btn"
+                    title="Run Cell (Shift + Enter)"
+                  >
+                    <Play size={11} fill="currentColor" />
+                  </button>
+                )
+              ) : (
+                <button 
+                  onClick={() => setIsMarkdownEditing(!isMarkdownEditing)}
+                  className="cell-run-btn"
+                  title={isMarkdownEditing ? "Preview Markdown (Shift + Enter)" : "Edit Markdown"}
+                >
+                  {isMarkdownEditing ? <Eye size={11} /> : <Edit3 size={11} />}
+                </button>
+              )}
+
+              <span className="cell-index-badge">[{index + 1}]</span>
+
+              <button 
+                onClick={toggleCellType} 
+                className="cell-type-pill" 
+                title="Click to toggle between Code and Markdown block"
+              >
+                {cellType === 'code' ? (
+                  <>
+                    <Code2 size={12} color="#2563eb" />
+                    <span>Python</span>
+                  </>
+                ) : (
+                  <>
+                    <AlignLeft size={12} color="#10b981" />
+                    <span>Markdown</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Right Header: Expand/Compact Size Toggle, Actions */}
+            <div className="cell-header-right">
+              {cellType === 'code' && (
+                <button 
+                  className={`cell-header-btn ${isExpanded ? 'active' : ''}`}
+                  onClick={toggleExpand}
+                  title={isExpanded ? "Collapse to compact height" : "Expand block to view all code without scrolling"}
+                >
+                  {isExpanded ? (
+                    <>
+                      <Minimize2 size={12} />
+                      <span>Compact</span>
+                    </>
+                  ) : (
+                    <>
+                      <Maximize2 size={12} />
+                      <span>{lineCount > 8 ? `Expand (${lineCount} lines)` : 'Expand'}</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {cellType === 'markdown' && !isMarkdownEditing && (
+                <button 
+                  className="cell-header-btn"
+                  onClick={() => setIsMarkdownEditing(true)}
+                  title="Edit Markdown text"
+                >
+                  <Edit3 size={12} />
+                  <span>Edit</span>
+                </button>
+              )}
+
+              {index > 0 && (
+                <button className="cell-header-btn" onClick={onMoveUp} title="Move block up">
+                  <ArrowUp size={12} />
+                </button>
+              )}
+              {index < totalCells - 1 && (
+                <button className="cell-header-btn" onClick={onMoveDown} title="Move block down">
+                  <ArrowDown size={12} />
+                </button>
+              )}
+              <button className="cell-header-btn" onClick={onDuplicate} title="Duplicate block">
+                <Copy size={12} />
+              </button>
+              <button className="cell-header-btn" onClick={onRemove} title="Delete block">
+                <Trash2 size={12} />
+              </button>
+              <button className="cell-header-btn" onClick={() => onAddBelow(cellType)} title="Add block below">
+                <Plus size={12} />
+              </button>
+            </div>
           </div>
         )}
 
@@ -1606,18 +1746,19 @@ function Cell({
             <div 
               className="markdown-rendered"
               onClick={() => { if (!presentationMode && !isViewer) setIsMarkdownEditing(true); }}
-              dangerouslySetInnerHTML={{ __html: renderedMarkdown || '<p style="color:var(--text-placeholder)">Empty text block.</p>' }}
+              dangerouslySetInnerHTML={{ __html: renderedMarkdown || '<p style="color:var(--text-placeholder)">Empty text block. Click to write markdown...</p>' }}
             />
           ) : (
             <div className="editor-container">
               <Editor
-                height="80px" 
+                height={`${Math.max(54, lineCount * 22 + 16)}px`}
                 theme="vs"
                 defaultLanguage="markdown"
                 language="markdown"
                 value={cell.content}
                 onChange={(val) => onUpdate({ content: val || '' })}
-                onMount={(editor, monaco) => {
+                onMount={(editor) => {
+                  editorInstanceRef.current = editor;
                   editor.onDidFocusEditorWidget(() => setIsFocused(true));
                   editor.onDidBlurEditorWidget(() => {
                     setIsFocused(false);
@@ -1626,21 +1767,12 @@ function Cell({
                     }
                   });
                   editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
-                    if (runHandlerRef.current) runHandlerRef.current();
+                    setIsMarkdownEditing(false);
                   });
-                  const updateHeight = () => {
-                    const contentHeight = Math.min(1000, Math.max(40, editor.getContentHeight()));
-                    if (editor.getDomNode()) {
-                      editor.getDomNode().style.height = `${contentHeight}px`;
-                      editor.layout();
-                    }
-                  };
-                  editor.onDidContentSizeChange(updateHeight);
-                  setTimeout(updateHeight, 100);
                 }}
                 options={{ 
                   readOnly: isViewer,
-                  minimap: { enabled: false }, scrollBeyondLastLine: false, fontSize: 14,
+                  minimap: { enabled: false }, scrollBeyondLastLine: false, fontSize: 13.5,
                   fontFamily: "'JetBrains Mono', 'Fira Code', monospace", lineNumbers: 'off',
                   folding: false, overviewRulerLanes: 0, renderLineHighlight: 'none',
                   hideCursorInOverviewRuler: true, scrollbar: { vertical: 'hidden', horizontal: 'hidden' },
@@ -1653,137 +1785,131 @@ function Cell({
           !presentationMode && (
             <div className="editor-container">
               <Editor
-                height="80px" 
+                height={`${editorTargetHeight}px`}
                 theme="vs"
                 defaultLanguage="python"
                 language="python"
                 value={cell.content}
                 onChange={(val) => onUpdate({ content: val || '' })}
                 onMount={(editor, monaco) => {
+                  editorInstanceRef.current = editor;
                   editor.onDidFocusEditorWidget(() => setIsFocused(true));
                   editor.onDidBlurEditorWidget(() => setIsFocused(false));
                   editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
                     if (runHandlerRef.current) runHandlerRef.current();
                   });
-                  const updateHeight = () => {
-                    const contentHeight = Math.min(1000, Math.max(40, editor.getContentHeight()));
-                    if (editor.getDomNode()) {
-                      editor.getDomNode().style.height = `${contentHeight}px`;
-                      editor.layout();
-                    }
-                  };
-                  editor.onDidContentSizeChange(updateHeight);
-                  setTimeout(updateHeight, 100);
                 }}
                 options={{ 
                   readOnly: isViewer,
-                  minimap: { enabled: false }, scrollBeyondLastLine: false, fontSize: 14,
-                  fontFamily: "'JetBrains Mono', 'Fira Code', monospace", lineNumbers: 'off',
-                  folding: false, overviewRulerLanes: 0, renderLineHighlight: 'none',
-                  hideCursorInOverviewRuler: true, scrollbar: { vertical: 'hidden', horizontal: 'hidden' },
-                  contextmenu: false, wordWrap: 'on'
+                  minimap: { enabled: false }, 
+                  scrollBeyondLastLine: false, 
+                  fontSize: 13.5,
+                  fontFamily: "'JetBrains Mono', 'Fira Code', monospace", 
+                  lineNumbers: 'on',
+                  lineNumbersMinChars: 3,
+                  glyphMargin: false,
+                  folding: true, 
+                  overviewRulerLanes: 0, 
+                  renderLineHighlight: 'line',
+                  hideCursorInOverviewRuler: true, 
+                  scrollbar: { 
+                    vertical: isExpanded && customHeight === null ? 'hidden' : 'auto', 
+                    horizontal: 'auto',
+                    verticalScrollbarSize: 8,
+                    horizontalScrollbarSize: 8
+                  },
+                  contextmenu: true, 
+                  wordWrap: 'on'
                 }}
               />
+
+              {/* Bottom Drag-Resize Handle */}
+              {!presentationMode && !isViewer && (
+                <div 
+                  className={`editor-resize-handle ${isResizing ? 'resizing' : ''}`}
+                  onMouseDown={handleMouseDownResize}
+                  onDoubleClick={toggleExpand}
+                  title="Drag up/down to adjust code block height. Double-click to auto-fit / expand all."
+                >
+                  <div className="resize-handle-bar" />
+                </div>
+              )}
             </div>
           )
         )}
 
-        {/* Output Container */}
+        {/* Output Container - Flush with Cell Bottom */}
         {cellType === 'code' && output.length > 0 && (
-          <div className="output-container table-responsive" style={{ position: 'relative', margin: presentationMode ? '0' : '4px 0 0 12px', padding: output.find(o => o.type === 'html') && !outputCollapsed ? '0px' : '12px' }}>
+          <div className="output-container">
             {!presentationMode && (
-              <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, display: 'flex', gap: '4px' }}>
-                <button 
-                  className="btn-icon" 
-                  onClick={() => setOutputCollapsed(!outputCollapsed)} 
-                  title={outputCollapsed ? "Expand output" : "Collapse output"}
-                  style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid var(--border-color)' }}
-                >
-                  {outputCollapsed ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
-                </button>
-                <button 
-                  className="btn-icon" 
-                  onClick={() => setOutput([])} 
-                  title="Clear output"
-                  style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid var(--border-color)' }}
-                >
-                  <Eraser size={12} />
-                </button>
+              <div className="output-header-bar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Terminal size={11} color="#A1A1AA" />
+                  <span>Output ({output.length} item{output.length > 1 ? 's' : ''})</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <button 
+                    className="output-header-btn" 
+                    onClick={() => setOutputCollapsed(!outputCollapsed)} 
+                    title={outputCollapsed ? "Expand output" : "Collapse output"}
+                  >
+                    {outputCollapsed ? <ChevronDown size={11} /> : <ChevronUp size={11} />}
+                    <span>{outputCollapsed ? 'Expand' : 'Collapse'}</span>
+                  </button>
+                  <button 
+                    className="output-header-btn" 
+                    onClick={() => setOutput([])} 
+                    title="Clear output"
+                  >
+                    <Eraser size={11} />
+                    <span>Clear</span>
+                  </button>
+                </div>
               </div>
             )}
 
             {outputCollapsed ? (
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                Outputs collapsed ({output.length} result item{output.length > 1 ? 's' : ''})
+              <div className="output-collapsed-banner" onClick={() => setOutputCollapsed(false)}>
+                Output hidden. Click to expand ({output.length} result item{output.length > 1 ? 's' : ''})...
               </div>
             ) : (
-              output.map((out, i) => {
-                if (out.type === 'html') {
-                  if (out.data.includes('<script')) {
+              <div className="output-body">
+                {output.map((out, i) => {
+                  if (out.type === 'html') {
+                    if (out.data.includes('<script')) {
+                      return (
+                        <iframe 
+                          key={i} 
+                          srcDoc={out.data} 
+                          title="Visualization"
+                          style={{ width: '100%', height: '620px', border: 'none', borderRadius: '6px', background: '#fff', display: 'block' }} 
+                          sandbox="allow-scripts allow-same-origin"
+                        />
+                      );
+                    }
                     return (
-                      <iframe 
+                      <div 
                         key={i} 
-                        srcDoc={out.data} 
-                        title="Visualization"
-                        style={{ width: '100%', height: '620px', border: 'none', borderRadius: '6px', background: '#fff', display: 'block' }} 
-                        sandbox="allow-scripts allow-same-origin"
+                        className="output-html-surface"
+                        dangerouslySetInnerHTML={{ __html: out.data }} 
                       />
                     );
                   }
+                  if (out.type === 'image') {
+                    return <img key={i} src={`data:image/png;base64,${out.data}`} alt="Cell output" style={{ maxWidth: '100%', borderRadius: '4px', margin: '4px 0' }} />;
+                  }
+                  
                   return (
-                    <div 
-                      key={i} 
-                      dangerouslySetInnerHTML={{ __html: out.data }} 
-                      style={{ background: '#fff', borderRadius: '6px', padding: '16px', border: '1px solid #eee' }} 
-                    />
+                    <div key={i} style={{ color: out.type === 'error' ? '#F87171' : '#E2E8F0', whiteSpace: 'pre-wrap', padding: '4px 0', fontFamily: 'inherit' }}>
+                      {out.data}
+                    </div>
                   );
-                }
-                if (out.type === 'image') {
-                  return <img key={i} src={`data:image/png;base64,${out.data}`} alt="Cell output" style={{ maxWidth: '100%', borderRadius: '4px' }} />;
-                }
-                
-                return (
-                  <div key={i} style={{ color: out.type === 'error' ? 'var(--accent-red)' : 'inherit', whiteSpace: 'pre-wrap', padding: '10px 4px' }}>
-                    {out.data}
-                  </div>
-                );
-              })
+                })}
+              </div>
             )}
           </div>
         )}
       </div>
-
-      {/* Right Hover Actions */}
-      {!presentationMode && !isViewer && (
-        <div style={{ width: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '4px', opacity: 0 }} className="cell-actions-right">
-          {index > 0 && (
-            <button className="btn-icon" onClick={onMoveUp} title="Move up">
-              <ArrowUp size={13} />
-            </button>
-          )}
-          {index < totalCells - 1 && (
-            <button className="btn-icon" onClick={onMoveDown} title="Move down">
-              <ArrowDown size={13} />
-            </button>
-          )}
-          <button className="btn-icon" onClick={onDuplicate} title="Duplicate block">
-            <Copy size={13} />
-          </button>
-          <button className="btn-icon" onClick={onRemove} title="Delete block">
-            <Trash2 size={13} />
-          </button>
-          <button className="btn-icon" onClick={() => onAddBelow(cellType)} title="Add block below">
-            <Plus size={13} />
-          </button>
-        </div>
-      )}
-
-      <style>{`
-        .cell-wrapper:hover .cell-actions-right { opacity: 1 !important; }
-        .output-container table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-        .output-container th, .output-container td { padding: 8px 12px; border: 1px solid #eee; text-align: right; }
-        .output-container th { background: #fbfbfb; font-weight: 600; color: #555; }
-      `}</style>
     </div>
   );
 }

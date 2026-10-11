@@ -91,65 +91,260 @@ body {
   border-color: #FECDD3;
 }
 
-/* Notebook Cell Styles */
+/* Notebook Cell Styles - Revamped & Bug-Free */
 .cell-wrapper {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding: 6px 4px;
-  border-radius: 8px;
-  transition: all 0.15s ease;
+  margin-bottom: 16px;
   position: relative;
+  transition: all 0.15s ease;
+  width: 100%;
 }
-.cell-wrapper:hover {
-  background: rgba(255, 255, 255, 0.015);
-}
-
-.cell-drag-handle {
-  opacity: 0;
-  color: var(--text-dim);
-  cursor: grab;
-  padding-top: 8px;
-  transition: opacity 0.2s;
-}
-.cell-wrapper:hover .cell-drag-handle { opacity: 0.8; }
-.cell-drag-handle:hover { opacity: 1; color: var(--text-muted); }
 
 .cell-content {
   flex: 1;
-  border: 1px solid var(--border-color);
+  width: 100%;
+  border: 1px solid #E5E7EB;
   border-radius: 8px;
   background: #FFFFFF;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
+  position: relative;
 }
+
+.cell-content:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
 .cell-content.focused {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 1px var(--border-focus), 0 2px 10px rgba(255, 75, 75, 0.12);
+  border-color: #FF4B4B !important;
+  box-shadow: 0 0 0 2px rgba(255, 75, 75, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Cell Integrated Header Bar */
+.cell-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+  min-height: 34px;
+  user-select: none;
+}
+
+.cell-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cell-drag-handle {
+  opacity: 0.45;
+  color: var(--text-dim);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.cell-content:hover .cell-drag-handle,
+.cell-drag-handle:hover {
+  opacity: 1;
+  color: var(--text-muted);
+}
+
+.cell-run-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid #E5E7EB;
   background: #FFFFFF;
+  color: #10B981;
+  cursor: pointer;
+  transition: all 0.12s ease;
 }
 
-.editor-container {
-  padding: 6px 8px;
-  background: transparent;
-  border-radius: 6px;
-  min-height: 48px;
-}
-.cell-content.focused .editor-container {
-  background: transparent;
+.cell-run-btn:hover {
+  background: #F0FDF4;
+  border-color: #86EFAC;
+  color: #059669;
+  transform: scale(1.05);
 }
 
-.output-container {
-  margin: 4px 8px 8px 8px;
-  padding: 12px 14px;
-  background: var(--bg-cell-output);
-  border-radius: 6px;
+.cell-run-btn.running {
+  background: #FEF2F2;
+  border-color: #FECDD3;
+  color: #EF4444;
+}
+
+.cell-index-badge {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: #e2e8f0;
-  border: 1px solid #2D3139;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 0 2px;
+}
+
+.cell-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.cell-content:hover .cell-header-right,
+.cell-content.focused .cell-header-right {
+  opacity: 1;
+}
+
+.cell-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.cell-header-btn:hover {
+  background: #E5E7EB;
+  color: var(--text-main);
+}
+
+.cell-header-btn.active {
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1E40AF;
+  font-weight: 600;
+}
+
+/* Editor Container */
+.editor-container {
+  padding: 0;
+  margin: 0;
+  background: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bottom Drag Resize Bar */
+.editor-resize-handle {
+  height: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ns-resize;
+  background: #F9FAFB;
+  border-top: 1px solid #F3F4F6;
+  border-bottom: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+}
+
+.editor-resize-handle:hover,
+.editor-resize-handle.resizing {
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+}
+
+.resize-handle-bar {
+  width: 32px;
+  height: 3px;
+  border-radius: 2px;
+  background: #CBD5E1;
+  transition: background 0.15s ease, width 0.15s ease;
+}
+
+.editor-resize-handle:hover .resize-handle-bar,
+.editor-resize-handle.resizing .resize-handle-bar {
+  background: #3B82F6;
+  width: 48px;
+}
+
+/* Output Console - Flush with Cell Bottom */
+.output-container {
+  margin: 0;
+  padding: 0;
+  background: #18181B;
+  border-top: 1px solid #E5E7EB;
+  border-radius: 0 0 7px 7px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #E2E8F0;
+  overflow: hidden;
+}
+
+.output-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background: #27272A;
+  border-bottom: 1px solid #3F3F46;
+  font-size: 11px;
+  color: #A1A1AA;
+}
+
+.output-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #3F3F46;
+  background: #18181B;
+  color: #D4D4D8;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.output-header-btn:hover {
+  background: #3F3F46;
+  color: #FFFFFF;
+}
+
+.output-body {
+  padding: 12px 14px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.output-collapsed-banner {
+  padding: 8px 14px;
+  font-size: 11px;
+  color: #A1A1AA;
+  cursor: pointer;
+  background: #27272A;
+}
+
+.output-collapsed-banner:hover {
+  color: #FFFFFF;
+}
+
+.output-html-surface {
+  background: #FFFFFF;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 4px 0;
+  color: #111827;
+  overflow-x: auto;
+  border: 1px solid #3F3F46;
 }
 
 /* UI Elements */
