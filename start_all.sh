@@ -6,7 +6,7 @@ echo "Starting Quantara Data Platform..."
 echo "Starting FastAPI Backend..."
 cd backend
 source .venv/bin/activate
-uvicorn main:app --reload --port 8000 &
+uvicorn main:app --reload --port 8001 &
 BACKEND_PID=$!
 cd ..
 
@@ -20,15 +20,15 @@ cd ..
 # 3. Start Frontend
 echo "Starting React Frontend..."
 cd frontend
-npm run dev &
+npm run dev -- --port 5174 &
 FRONTEND_PID=$!
 cd ..
 
 echo ""
 echo "=================================================="
 echo "Quantara is now running!"
-echo "UI: http://localhost:5173"
-echo "API: http://localhost:8000"
+echo "UI: http://localhost:5174"
+echo "API: http://localhost:8001"
 echo "Default Credentials: admin / admin"
 echo "=================================================="
 echo "Press Ctrl+C to shut down all services."
