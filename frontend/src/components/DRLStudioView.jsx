@@ -297,7 +297,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="drl-grid-2">
               <div className="drl-card">
                 <div className="drl-card-title">
                   <span>MULTI-MARKET CALENDAR HARMONIZATION</span>
@@ -348,7 +348,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
         ======================================================== */}
         {currentStep === 2 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="drl-grid-2">
               <div className="drl-card">
                 <div className="drl-card-title">
                   <span>MEMORY-PRESERVING FRACTIONAL DIFF (MARCOS LÓPEZ DE PRADO)</span>
@@ -444,7 +444,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
                 Dense, risk-adjusted reward signals are critical to prevent agent drawdown collapse and fee churn.
               </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '14px' }}>
+              <div className="drl-cards-3" style={{ marginBottom: '14px' }}>
                 <div 
                   className={`scenario-select-card ${rewardType === 'differential_sharpe' ? 'active' : ''}`}
                   onClick={() => { setRewardType('differential_sharpe'); handlePreviewReward('differential_sharpe'); }}
@@ -532,7 +532,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
         {currentStep === 4 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {simResult && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '14px' }}>
+              <div className="drl-kpi-grid">
                 <div className="risk-kpi-card">
                   <div className="kpi-label">Gross Return</div>
                   <div className="kpi-value" style={{ color: '#10b981' }}>
@@ -575,7 +575,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="drl-grid-2">
               {/* Policy Diagnostic & Entropy */}
               <div className="drl-card">
                 <div className="drl-card-title">

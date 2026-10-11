@@ -162,11 +162,22 @@ const TEMPLATES = [
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('quantara_token') || localStorage.getItem('nexus_token'));
   const [user, setUser] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 1024);
+  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
   const [notebooks, setNotebooks] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [kernelStatus, setKernelStatus] = useState({ state: 'idle', alive: true });
   const [collaborators, setCollaborators] = useState([]);
+
+  // Responsive Screen Listener
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // View Modes: 'notebook' | 'streamlit' | 'market_depth' | 'risk_sentinel'
   const [viewMode, setViewMode] = useState('notebook');
@@ -304,6 +315,7 @@ export default function App() {
   const handleSelectNotebook = async (targetId) => {
     setActiveId(targetId);
     setViewMode('notebook');
+    if (isMobile) setSidebarOpen(false);
 
     const url = new URL(window.location.href);
     url.searchParams.set('notebook', targetId);
@@ -397,6 +409,7 @@ export default function App() {
     setNotebooks(newNotebooks);
     yState.set('notebooks', JSON.stringify(newNotebooks));
     setActiveId(fullNb.id);
+    if (isMobile) setSidebarOpen(false);
   };
 
   const createBlankNotebook = async () => {
@@ -420,6 +433,7 @@ export default function App() {
     setNotebooks(newNotebooks);
     yState.set('notebooks', JSON.stringify(newNotebooks));
     setActiveId(fullNb.id);
+    if (isMobile) setSidebarOpen(false);
   };
 
   const deleteNotebook = async (e, idToDelete) => {
@@ -910,23 +924,38 @@ export default function App() {
   const activeNotebook = notebooks.find(nb => nb.id === activeId);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+      {/* Mobile Sidebar Backdrop Overlay */}
+      {isMobile && sidebarOpen && (
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* SIDEBAR */}
-      <div style={{ 
-        width: sidebarOpen ? '280px' : '0px', 
-        background: 'var(--bg-sidebar)', 
-        borderRight: '1px solid var(--border-color)',
-        transition: 'width 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        flexShrink: 0
-      }}>
-        <div style={{ padding: '20px 16px', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: '600', color: 'var(--text-main)', fontSize: '15px' }}>
-          <div style={{ background: 'var(--accent-blue)', color: 'white', borderRadius: '6px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Terminal size={18} />
+      <div 
+        className={isMobile && sidebarOpen ? 'sidebar-container-mobile' : ''}
+        style={{ 
+          width: sidebarOpen ? '280px' : '0px', 
+          background: 'var(--bg-sidebar)', 
+          borderRight: '1px solid var(--border-color)',
+          transition: 'width 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexShrink: 0
+        }}
+      >
+        <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '700', color: 'var(--text-main)', fontSize: '15px' }}>
+            <div style={{ background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', borderRadius: '6px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Terminal size={16} />
+            </div>
+            Quantara Hub
           </div>
-          Quantara Trading Hub
+          {isMobile && (
+            <button className="btn-icon" onClick={() => setSidebarOpen(false)} title="Close navigation drawer">
+              <X size={16} />
+            </button>
+          )}
         </div>
         
         <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '20px' }}>
@@ -1022,7 +1051,7 @@ export default function App() {
         />
 
         {/* 3-ZONE INSTITUTIONAL TOP NAV & TOOLBAR */}
-        <div style={{ 
+        <div className="top-navbar-3zone" style={{ 
           height: '52px', 
           display: 'flex', 
           alignItems: 'center', 
@@ -1057,15 +1086,15 @@ export default function App() {
                 {/* Role tag badge */}
                 {activeNotebook.role === 'viewer' ? (
                   <span className="badge-warning" style={{ fontSize: '10px', padding: '1px 6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <Eye size={10} /> Viewer
+                    <Eye size={10} /> <span className="btn-hide-mobile">Viewer</span>
                   </span>
                 ) : activeNotebook.role === 'editor' ? (
                   <span className="badge-info" style={{ fontSize: '10px', padding: '1px 6px' }}>
-                    Editor
+                    <span className="btn-hide-mobile">Editor</span>
                   </span>
                 ) : (
                   <span className="badge-neutral" style={{ fontSize: '10px', padding: '1px 6px' }}>
-                    Owner
+                    <span className="btn-hide-mobile">Owner</span>
                   </span>
                 )}
               </div>
@@ -1073,7 +1102,7 @@ export default function App() {
 
             {/* Multiplayer Collaborator Avatars */}
             {collaborators.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }} title={`${collaborators.length} active collaborator(s)`}>
+              <div className="btn-hide-mobile" style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }} title={`${collaborators.length} active collaborator(s)`}>
                 {collaborators.map((c, i) => (
                   <div 
                     key={i} 
@@ -1095,42 +1124,42 @@ export default function App() {
               onClick={() => setViewMode('notebook')}
               title="Interactive Quant Research Notebook"
             >
-              <FileText size={13} /> Notebook
+              <FileText size={13} /> <span className="label-text">Notebook</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'staging_shadow' ? 'active' : ''}`}
               onClick={() => setViewMode('staging_shadow')}
               title="Paper Trading & Shadow Dark-Launch Execution Staging"
             >
-              <Layers size={13} color="#38bdf8" /> Staging & Shadow
+              <Layers size={13} color="#38bdf8" /> <span className="label-text">Staging</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'drl_studio' ? 'active' : ''}`}
               onClick={() => setViewMode('drl_studio')}
               title="Deep Reinforcement Learning Pre-Processing & Execution Backtester"
             >
-              <Cpu size={13} color="#10b981" /> DRL Studio
+              <Cpu size={13} color="#10b981" /> <span className="label-text">DRL Studio</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'market_depth' ? 'active' : ''}`}
               onClick={() => setViewMode('market_depth')}
               title="Real-Time L2 Order Book & Depth Ladder"
             >
-              <Activity size={13} color="#38bdf8" /> Market Depth
+              <Activity size={13} color="#38bdf8" /> <span className="label-text">Market Depth</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'risk_sentinel' ? 'active' : ''}`}
               onClick={() => setViewMode('risk_sentinel')}
               title="Extreme Tail Risk Stress Testing & VaR"
             >
-              <ShieldAlert size={13} color="#f59e0b" /> Risk Sentinel
+              <ShieldAlert size={13} color="#f59e0b" /> <span className="label-text">Risk Sentinel</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'streamlit' ? 'active' : ''}`}
               onClick={() => setViewMode('streamlit')}
               title="CTO / Stakeholder Streamlit Executive Studio"
             >
-              <LayoutDashboard size={13} color="#f43f5e" /> Executive Studio
+              <LayoutDashboard size={13} color="#f43f5e" /> <span className="label-text">Executive Studio</span>
             </button>
           </div>
 
@@ -1141,7 +1170,7 @@ export default function App() {
                 {/* Kernel Status Badge */}
                 <div className="status-badge" title="Python Kernel Status">
                   <span className={`status-dot ${kernelStatus.state}`} />
-                  <span style={{ textTransform: 'capitalize', fontSize: '11px' }}>
+                  <span className="btn-hide-mobile" style={{ textTransform: 'capitalize', fontSize: '11px' }}>
                     {kernelStatus.state === 'busy' ? 'Busy' : 
                      kernelStatus.state === 'restarting' ? 'Restarting' : 
                      kernelStatus.alive ? 'Idle' : 'Offline'}
@@ -1170,14 +1199,14 @@ export default function App() {
                       <RotateCcw size={12} />
                     </button>
                     <button className="btn-primary" onClick={saveWork} style={{ padding: '6px 12px', fontSize: '12px' }}>
-                      <Save size={13} /> Save
+                      <Save size={13} /> <span className="btn-hide-mobile">Save</span>
                     </button>
                   </>
                 )}
 
                 {/* Share Notebook Modal Button */}
                 <button 
-                  className="btn-secondary"
+                  className="btn-secondary btn-hide-mobile"
                   onClick={() => setShowShareModal(true)}
                   title="Share notebook with team members"
                   style={{ padding: '6px 10px', fontSize: '12px' }}
@@ -1201,7 +1230,7 @@ export default function App() {
                 }}
               >
                 <Sliders size={13} color="#38bdf8" />
-                <span>Tools</span>
+                <span className="btn-hide-mobile">Tools</span>
                 <ChevronDown size={11} style={{ transform: toolsMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
               </button>
 
@@ -1240,6 +1269,18 @@ export default function App() {
                       <div style={{ fontSize: '10px', color: '#64748b' }}>PDF briefing memo & Slack digest</div>
                     </div>
                   </button>
+                  {viewMode === 'notebook' && (
+                    <button 
+                      className="tools-dropdown-item"
+                      onClick={() => { setShowShareModal(true); setToolsMenuOpen(false); }}
+                    >
+                      <Users size={14} color="#38bdf8" />
+                      <div>
+                        <div style={{ fontWeight: 600 }}>Share Notebook</div>
+                        <div style={{ fontSize: '10px', color: '#64748b' }}>Invite collaborators & roles</div>
+                      </div>
+                    </button>
+                  )}
 
                   <div style={{ height: '1px', background: '#1e293b', margin: '4px 0' }} />
                   
@@ -1465,21 +1506,21 @@ function NotebookView({
   const isViewer = notebook?.role === 'viewer';
 
   return (
-    <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 40px 200px' }}>
+    <div className="notebook-container">
       
       {/* Notebook Toolbar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+      <div className="notebook-title-bar">
         <input 
           type="text"
           value={notebook.title}
           onChange={(e) => updateTitle(e.target.value)}
           className="title-input"
-          style={{ marginBottom: 0, fontSize: '32px' }}
+          style={{ marginBottom: 0 }}
           placeholder="Untitled"
           readOnly={presentationMode || isViewer}
         />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <div className="notebook-actions-row">
           {/* Executive Mode / Hide Code Toggle */}
           <button 
             className={`btn-secondary ${presentationMode ? 'active' : ''}`} 
@@ -1487,8 +1528,8 @@ function NotebookView({
             title={presentationMode ? "Switch to Editor Mode (show code)" : "Executive Mode: Hide code blocks for CTO/stakeholders"}
             style={{ borderColor: presentationMode ? 'var(--accent-blue)' : 'var(--border-color)', color: presentationMode ? 'var(--accent-blue)' : 'inherit' }}
           >
-            {presentationMode ? <EyeOff size={14} /> : <Eye size={14} />} 
-            {presentationMode ? "Show Code" : "Executive View"}
+            {presentationMode ? <EyeOff size={13} /> : <Eye size={13} />} 
+            <span className="btn-hide-mobile">{presentationMode ? "Show Code" : "Executive View"}</span>
           </button>
 
           {/* Export to Streamlit Dashboard Button */}
@@ -1497,16 +1538,17 @@ function NotebookView({
             onClick={onExportToStreamlit}
             title="Convert this notebook into a live Streamlit dashboard for stakeholders"
           >
-            <Sparkles size={14} color="#8b5cf6" /> Export to Streamlit
+            <Sparkles size={13} color="#8b5cf6" /> 
+            <span className="btn-hide-mobile">Streamlit</span>
           </button>
 
           {!presentationMode && !isViewer && (
             <>
               <button className="btn-secondary" onClick={handleRunAll} title="Run all code cells sequentially">
-                <PlayCircle size={14} color="var(--accent-green)" /> Run All
+                <PlayCircle size={13} color="var(--accent-green)" /> Run All
               </button>
               <button className="btn-secondary" onClick={clearAllOutputs} title="Clear all cell outputs">
-                <Eraser size={14} /> Clear Outputs
+                <Eraser size={13} /> Clear
               </button>
             </>
           )}
@@ -1679,7 +1721,7 @@ function Cell({
     >
       {/* Left Action Column */}
       {!presentationMode && !isViewer && (
-        <div style={{ width: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+        <div className="cell-drag-column" style={{ width: '36px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
           <div 
             className="cell-drag-handle" 
             title="Drag to reorder cell"
@@ -1848,7 +1890,7 @@ function Cell({
 
         {/* Output Container */}
         {cellType === 'code' && output.length > 0 && (
-          <div className="output-container" style={{ position: 'relative', margin: presentationMode ? '0' : '4px 0 0 12px', padding: output.find(o => o.type === 'html') && !outputCollapsed ? '0px' : '12px' }}>
+          <div className="output-container table-responsive" style={{ position: 'relative', margin: presentationMode ? '0' : '4px 0 0 12px', padding: output.find(o => o.type === 'html') && !outputCollapsed ? '0px' : '12px' }}>
             {!presentationMode && (
               <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10, display: 'flex', gap: '4px' }}>
                 <button 

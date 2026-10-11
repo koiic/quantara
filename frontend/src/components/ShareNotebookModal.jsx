@@ -86,41 +86,18 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
   const isOwner = userRole === 'owner';
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(15, 23, 42, 0.65)',
-      backdropFilter: 'blur(4px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999,
-      animation: 'fadeIn 0.15s ease-out'
-    }}>
-      <div style={{
-        background: '#ffffff',
-        width: '540px',
-        maxWidth: '92vw',
-        borderRadius: '12px',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        border: '1px solid #e2e8f0',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div 
+        className="modal-card" 
+        style={{ maxWidth: '560px', width: 'min(560px, 94vw)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div style={{
-          padding: '20px 24px',
-          borderBottom: '1px solid #f1f5f9',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: '#f8fafc'
-        }}>
+        <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
-              background: '#e0e7ff',
-              color: '#4338ca',
+              background: 'rgba(2, 132, 199, 0.15)',
+              color: '#38bdf8',
               padding: '8px',
               borderRadius: '8px',
               display: 'flex',
@@ -130,7 +107,7 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
               <Users size={18} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>
+              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#f8fafc' }}>
                 Share "{notebook?.title || 'Untitled'}"
               </h3>
               <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748b' }}>
@@ -147,30 +124,30 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
           </button>
         </div>
 
-        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '18px', overflowY: 'auto' }}>
           {/* Quick Share Link Box */}
           <div style={{
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
+            background: '#070b14',
+            border: '1px solid #1e293b',
             borderRadius: '8px',
             padding: '12px 14px'
           }}>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <ExternalLink size={13} color="#64748b" /> Shareable Direct Link
+            <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <ExternalLink size={12} color="#38bdf8" /> Shareable Direct Link
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <input 
                 type="text" 
                 readOnly 
                 value={shareableUrl} 
                 style={{
-                  flex: 1,
+                  flex: '1 1 200px',
                   padding: '7px 10px',
                   fontSize: '12px',
-                  background: '#ffffff',
-                  border: '1px solid #cbd5e1',
+                  background: '#131b2e',
+                  border: '1px solid #334155',
                   borderRadius: '6px',
-                  color: '#334155',
+                  color: '#f8fafc',
                   fontFamily: 'monospace'
                 }}
               />
@@ -180,12 +157,12 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                 style={{
                   fontSize: '12px',
                   padding: '6px 14px',
-                  background: copiedLink ? '#ecfdf5' : '#ffffff',
-                  borderColor: copiedLink ? '#10b981' : '#cbd5e1',
-                  color: copiedLink ? '#059669' : '#334155'
+                  background: copiedLink ? 'rgba(16, 185, 129, 0.15)' : '#1e293b',
+                  borderColor: copiedLink ? '#10b981' : '#334155',
+                  color: copiedLink ? '#34d399' : '#f8fafc'
                 }}
               >
-                {copiedLink ? <Check size={14} color="#059669" /> : <Copy size={14} />}
+                {copiedLink ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
                 {copiedLink ? 'Copied' : 'Copy'}
               </button>
             </div>
@@ -194,15 +171,15 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
           {/* Invite Form (Owner Only) */}
           {isOwner ? (
             <form onSubmit={handleInvite} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <UserPlus size={14} color="#2563eb" /> Invite Collaborator
+              <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <UserPlus size={13} color="#38bdf8" /> Invite Collaborator
               </div>
 
               {error && (
                 <div style={{
-                  background: '#fef2f2',
-                  border: '1px solid #fee2e2',
-                  color: '#b91c1c',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  color: '#f87171',
                   padding: '8px 12px',
                   borderRadius: '6px',
                   fontSize: '12px',
@@ -216,9 +193,9 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
 
               {successMsg && (
                 <div style={{
-                  background: '#ecfdf5',
-                  border: '1px solid #d1fae5',
-                  color: '#047857',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  color: '#34d399',
                   padding: '8px 12px',
                   borderRadius: '6px',
                   fontSize: '12px',
@@ -230,18 +207,20 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <input 
                   type="text"
-                  placeholder="Enter colleague username or email (e.g. quant2@firm.com)"
+                  placeholder="Colleague username or email (e.g. quant2@firm.com)"
                   value={inviteTarget}
                   onChange={(e) => setInviteTarget(e.target.value)}
                   style={{
-                    flex: 1,
+                    flex: '1 1 180px',
                     padding: '8px 12px',
                     fontSize: '13px',
-                    border: '1px solid #cbd5e1',
+                    background: '#131b2e',
+                    border: '1px solid #334155',
                     borderRadius: '6px',
+                    color: '#f8fafc',
                     outline: 'none'
                   }}
                   required
@@ -250,12 +229,13 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
                   style={{
+                    flex: '0 1 150px',
                     padding: '8px 10px',
                     fontSize: '13px',
-                    border: '1px solid #cbd5e1',
+                    border: '1px solid #334155',
                     borderRadius: '6px',
-                    background: '#f8fafc',
-                    color: '#334155',
+                    background: '#131b2e',
+                    color: '#f8fafc',
                     cursor: 'pointer'
                   }}
                 >
@@ -266,7 +246,7 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                   type="submit"
                   disabled={inviting}
                   className="btn-primary"
-                  style={{ fontSize: '13px', padding: '8px 16px', background: '#2563eb' }}
+                  style={{ fontSize: '13px', padding: '8px 16px' }}
                 >
                   {inviting ? 'Inviting...' : 'Invite'}
                 </button>
@@ -278,11 +258,12 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
             </form>
           ) : (
             <div style={{
-              background: '#f1f5f9',
+              background: '#070b14',
+              border: '1px solid #1e293b',
               padding: '10px 14px',
               borderRadius: '6px',
               fontSize: '12px',
-              color: '#64748b'
+              color: '#94a3b8'
             }}>
               You have <b>{userRole.toUpperCase()}</b> permissions. Only the notebook owner (<b>{owner}</b>) can invite new collaborators.
             </div>
@@ -290,14 +271,14 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
 
           {/* Collaborator List */}
           <div>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               People with Access
             </div>
 
             <div style={{
-              border: '1px solid #e2e8f0',
+              border: '1px solid #1e293b',
               borderRadius: '8px',
-              divideY: '1px solid #f1f5f9',
+              background: '#070b14',
               maxHeight: '220px',
               overflowY: 'auto'
             }}>
@@ -307,15 +288,15 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '10px 14px',
-                borderBottom: '1px solid #f1f5f9'
+                borderBottom: '1px solid #1e293b'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{
                     width: '30px',
                     height: '30px',
                     borderRadius: '50%',
-                    background: '#fef3c7',
-                    color: '#b45309',
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    color: '#f59e0b',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -325,7 +306,7 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                     <Crown size={14} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
                       {owner} {owner === currentUser?.username ? '(You)' : ''}
                     </div>
                     <div style={{ fontSize: '11px', color: '#64748b' }}>Notebook Owner</div>
@@ -336,9 +317,9 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                   fontWeight: 600,
                   padding: '3px 8px',
                   borderRadius: '12px',
-                  background: '#fef3c7',
-                  color: '#92400e',
-                  border: '1px solid #fde68a'
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  color: '#fbbf24',
+                  border: '1px solid rgba(245, 158, 11, 0.3)'
                 }}>
                   Owner
                 </span>
@@ -353,7 +334,7 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px 14px',
-                    borderBottom: '1px solid #f1f5f9'
+                    borderBottom: '1px solid #1e293b'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -361,8 +342,8 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                       width: '30px',
                       height: '30px',
                       borderRadius: '50%',
-                      background: s.role === 'editor' ? '#eff6ff' : '#f8fafc',
-                      color: s.role === 'editor' ? '#2563eb' : '#64748b',
+                      background: s.role === 'editor' ? 'rgba(2, 132, 199, 0.15)' : '#1e293b',
+                      color: s.role === 'editor' ? '#38bdf8' : '#94a3b8',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -372,10 +353,10 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                       {s.role === 'editor' ? <Edit3 size={14} /> : <Eye size={14} />}
                     </div>
                     <div>
-                      <div style={{ fontSize: '13px', fontWeight: 500, color: '#1e293b' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 500, color: '#f8fafc' }}>
                         {s.user_or_email}
                       </div>
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                      <div style={{ fontSize: '11px', color: '#64748b' }}>
                         Invited by {s.invited_by} • {new Date(s.created_at).toLocaleDateString()}
                       </div>
                     </div>
@@ -387,9 +368,9 @@ export default function ShareNotebookModal({ notebook, token, apiUrl, currentUse
                       fontWeight: 600,
                       padding: '3px 8px',
                       borderRadius: '12px',
-                      background: s.role === 'editor' ? '#eff6ff' : '#f1f5f9',
-                      color: s.role === 'editor' ? '#1d4ed8' : '#475569',
-                      border: s.role === 'editor' ? '1px solid #dbeafe' : '1px solid #e2e8f0',
+                      background: s.role === 'editor' ? 'rgba(2, 132, 199, 0.15)' : '#1e293b',
+                      color: s.role === 'editor' ? '#38bdf8' : '#cbd5e1',
+                      border: s.role === 'editor' ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid #334155',
                       textTransform: 'capitalize'
                     }}>
                       {s.role}

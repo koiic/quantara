@@ -119,7 +119,7 @@ export default function MarketDepthView({ activeSymbol = 'BTC-USD', onSymbolChan
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Mid Price: </span>
             <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-main)', marginLeft: '4px' }}>

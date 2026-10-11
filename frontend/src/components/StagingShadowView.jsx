@@ -172,14 +172,7 @@ export default function StagingShadowView({ token }) {
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: '#090d16', color: '#f1f5f9', overflow: 'hidden' }}>
       
       {/* TOP HEADER & STAGING MODE SELECTOR */}
-      <div style={{ 
-        padding: '14px 24px', 
-        borderBottom: '1px solid #1e293b', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        background: '#0d1322'
-      }}>
+      <div className="staging-header-bar">
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ background: mode === 'PAPER' ? '#0284c7' : '#7c3aed', padding: '6px', borderRadius: '6px', color: 'white' }}>
@@ -208,7 +201,7 @@ export default function StagingShadowView({ token }) {
         </div>
 
         {/* MODE SWITCHER PILL */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', background: '#1e293b', borderRadius: '8px', padding: '3px', border: '1px solid #334155' }}>
             <button
               onClick={() => setMode('PAPER')}
@@ -273,14 +266,7 @@ export default function StagingShadowView({ token }) {
 
       {/* PORTFOLIO STATS RIBBON */}
       {portfolio && (
-        <div style={{ 
-          background: '#0e172a', 
-          borderBottom: '1px solid #1e293b', 
-          padding: '12px 24px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: '16px'
-        }}>
+        <div className="portfolio-stats-ribbon">
           <div>
             <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: 600 }}>Total Equity</div>
             <div style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}>
@@ -424,20 +410,10 @@ export default function StagingShadowView({ token }) {
       )}
 
       {/* MAIN CONTENT SPLIT: LEFT ORDER TICKET + RIGHT BLOTTER & FORENSICS */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div className="staging-main-split">
 
         {/* LEFT COLUMN: ORDER ENTRY TICKET */}
-        <div style={{ 
-          width: '380px', 
-          borderRight: '1px solid #1e293b', 
-          background: '#0d1322', 
-          padding: '20px', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '18px',
-          overflowY: 'auto',
-          flexShrink: 0
-        }}>
+        <div className="staging-order-ticket-col">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontWeight: 700, fontSize: '15px', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Zap size={16} color="#38bdf8" /> Order Ticket
@@ -704,15 +680,19 @@ export default function StagingShadowView({ token }) {
         </div>
 
         {/* RIGHT COLUMN: MULTI-TAB BLOTTER, POSITIONS & FORENSICS */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div className="staging-blotter-col">
           
           {/* TABS NAVIGATION */}
           <div style={{ 
             background: '#0d1322', 
             borderBottom: '1px solid #1e293b', 
-            padding: '0 20px', 
+            padding: '0 16px', 
             display: 'flex', 
-            gap: '8px' 
+            gap: '8px',
+            overflowX: 'auto',
+            whiteSpace: 'nowrap',
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none'
           }}>
             {[
               { id: 'positions', label: `Active Positions (${positions.length})`, icon: TrendingUp },
