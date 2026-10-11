@@ -14,11 +14,12 @@ import {
   CalendarClock, Clock, X, CheckCircle2, XCircle, 
   Table as TableIcon, FileSpreadsheet, LayoutDashboard,
   ExternalLink, Sparkles, GitBranch, ShieldAlert, Sliders,
-  Printer, Zap, Cpu, Layers
+  Printer, Zap, Cpu, Layers, Globe
 } from 'lucide-react';
 import './index.css';
 
 // Institutional Feature Pillar Components
+import LandingPageView from './components/LandingPageView';
 import TickerTape from './components/TickerTape';
 import QuantCopilotDrawer from './components/QuantCopilotDrawer';
 import MarketDepthView from './components/MarketDepthView';
@@ -211,6 +212,7 @@ export default function App() {
   const [authTab, setAuthTab] = useState('login'); // 'login' | 'register'
   const [authError, setAuthError] = useState(null);
   const [authLoading, setAuthLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
 
   // Auth Effect
@@ -598,6 +600,8 @@ export default function App() {
       });
       localStorage.setItem('quantara_token', res.data.access_token);
       setToken(res.data.access_token);
+      setShowAuthModal(false);
+      setViewMode('notebook');
     } catch (err) {
       setAuthError("Incorrect username or password. (Try admin / admin or register a new account)");
     } finally {
@@ -624,8 +628,32 @@ export default function App() {
       });
       localStorage.setItem('quantara_token', res.data.access_token);
       setToken(res.data.access_token);
+      setShowAuthModal(false);
+      setViewMode('notebook');
     } catch (err) {
       setAuthError(err.response?.data?.detail || "Registration failed. Try a different username or email.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleQuickLogin = async (username = 'admin', password = 'admin') => {
+    setAuthError(null);
+    setAuthLoading(true);
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
+
+    try {
+      const res = await axios.post(`${API_URL}/api/auth/token`, formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      localStorage.setItem('quantara_token', res.data.access_token);
+      setToken(res.data.access_token);
+      setShowAuthModal(false);
+      setViewMode('notebook');
+    } catch (err) {
+      setAuthError("Quick demo login failed. Please ensure backend is running.");
     } finally {
       setAuthLoading(false);
     }
@@ -636,288 +664,27 @@ export default function App() {
     localStorage.removeItem('nexus_token');
     setToken(null);
     setUser(null);
+    setViewMode('notebook');
   };
 
   if (!token) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        height: '100vh', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        background: 'radial-gradient(ellipse at 50% 25%, rgba(2, 132, 199, 0.12) 0%, #070b14 70%)',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
-      }}>
-        <div style={{ 
-          background: '#0d1322', 
-          padding: '36px 32px', 
-          borderRadius: '14px', 
-          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05)', 
-          width: '400px', 
-          border: '1px solid #1e293b' 
-        }}>
-          {/* Brand Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-            <div style={{ 
-              background: 'linear-gradient(135deg, #0284c7, #2563eb)', 
-              color: 'white', 
-              borderRadius: '8px', 
-              padding: '8px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(2, 132, 199, 0.35)'
-            }}>
-              <Terminal size={20} />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontWeight: 700, fontSize: '18px', color: '#f8fafc', letterSpacing: '-0.3px' }}>Quantara</span>
-                <span style={{ 
-                  background: 'rgba(2, 132, 199, 0.15)', 
-                  border: '1px solid rgba(56, 189, 248, 0.3)', 
-                  color: '#38bdf8', 
-                  fontSize: '10px', 
-                  fontWeight: 700, 
-                  borderRadius: '4px', 
-                  padding: '1px 5px',
-                  letterSpacing: '0.5px'
-                }}>PRO</span>
-              </div>
-              <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
-                Quantitative Research & Staging Hub
-              </div>
-            </div>
-          </div>
-
-          {/* Auth Tab Switcher */}
-          <div style={{ display: 'flex', background: '#070b14', borderRadius: '8px', padding: '3px', margin: '20px 0 18px', border: '1px solid #1e293b' }}>
-            <button
-              type="button"
-              onClick={() => { setAuthTab('login'); setAuthError(null); }}
-              style={{
-                flex: 1,
-                padding: '7px 0',
-                fontSize: '12px',
-                fontWeight: 600,
-                borderRadius: '6px',
-                border: 'none',
-                background: authTab === 'login' ? '#1e293b' : 'transparent',
-                color: authTab === 'login' ? '#f8fafc' : '#64748b',
-                boxShadow: authTab === 'login' ? '0 1px 4px rgba(0,0,0,0.4)' : 'none',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => { setAuthTab('register'); setAuthError(null); }}
-              style={{
-                flex: 1,
-                padding: '7px 0',
-                fontSize: '12px',
-                fontWeight: 600,
-                borderRadius: '6px',
-                border: 'none',
-                background: authTab === 'register' ? '#1e293b' : 'transparent',
-                color: authTab === 'register' ? '#f8fafc' : '#64748b',
-                boxShadow: authTab === 'register' ? '0 1px 4px rgba(0,0,0,0.4)' : 'none',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              Create Account
-            </button>
-          </div>
-
-          {authError && (
-            <div style={{ 
-              background: 'rgba(244, 63, 94, 0.1)', 
-              border: '1px solid rgba(244, 63, 94, 0.3)', 
-              color: '#fb7185', 
-              padding: '9px 12px', 
-              borderRadius: '6px', 
-              fontSize: '12px', 
-              marginBottom: '16px' 
-            }}>
-              {authError}
-            </div>
-          )}
-
-          {authTab === 'login' ? (
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username</label>
-                <input 
-                  name="username" 
-                  type="text" 
-                  defaultValue="admin" 
-                  required 
-                  style={{ 
-                    width: '100%', 
-                    padding: '9px 12px', 
-                    background: '#131b2e', 
-                    border: '1px solid #334155', 
-                    borderRadius: '6px', 
-                    marginTop: '4px', 
-                    fontSize: '13px', 
-                    color: '#f8fafc',
-                    boxSizing: 'border-box'
-                  }} 
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
-                <input 
-                  name="password" 
-                  type="password" 
-                  defaultValue="admin" 
-                  required 
-                  style={{ 
-                    width: '100%', 
-                    padding: '9px 12px', 
-                    background: '#131b2e', 
-                    border: '1px solid #334155', 
-                    borderRadius: '6px', 
-                    marginTop: '4px', 
-                    fontSize: '13px', 
-                    color: '#f8fafc',
-                    boxSizing: 'border-box'
-                  }} 
-                />
-              </div>
-              <button 
-                type="submit" 
-                disabled={authLoading} 
-                className="btn-primary" 
-                style={{ 
-                  width: '100%', 
-                  justifyContent: 'center', 
-                  marginTop: '6px', 
-                  padding: '10px 0',
-                  boxShadow: '0 4px 14px rgba(2, 132, 199, 0.35)'
-                }}
-              >
-                <Lock size={14} /> {authLoading ? 'Signing In...' : 'Sign In to Hub'}
-              </button>
-              <div style={{ 
-                fontSize: '11px', 
-                color: '#94a3b8', 
-                textAlign: 'center', 
-                marginTop: '6px',
-                background: '#070b14',
-                border: '1px solid #1e293b',
-                padding: '8px 10px',
-                borderRadius: '6px'
-              }}>
-                Demo accounts: <code style={{ color: '#38bdf8' }}>admin</code> / <code style={{ color: '#38bdf8' }}>admin</code> or <code style={{ color: '#38bdf8' }}>quant1</code> / <code style={{ color: '#38bdf8' }}>quant123</code>
-              </div>
-            </form>
-          ) : (
-            <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username *</label>
-                <input 
-                  name="reg_username" 
-                  type="text" 
-                  placeholder="e.g. sarah_quant" 
-                  required 
-                  style={{ 
-                    width: '100%', 
-                    padding: '8px 12px', 
-                    background: '#131b2e', 
-                    border: '1px solid #334155', 
-                    borderRadius: '6px', 
-                    marginTop: '4px', 
-                    fontSize: '13px', 
-                    color: '#f8fafc',
-                    boxSizing: 'border-box'
-                  }} 
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</label>
-                <input 
-                  name="reg_fullname" 
-                  type="text" 
-                  placeholder="e.g. Sarah Chen, CFA" 
-                  style={{ 
-                    width: '100%', 
-                    padding: '8px 12px', 
-                    background: '#131b2e', 
-                    border: '1px solid #334155', 
-                    borderRadius: '6px', 
-                    marginTop: '4px', 
-                    fontSize: '13px', 
-                    color: '#f8fafc',
-                    boxSizing: 'border-box'
-                  }} 
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Corporate / Quant Email</label>
-                <input 
-                  name="reg_email" 
-                  type="email" 
-                  placeholder="e.g. schen@firm.com" 
-                  style={{ 
-                    width: '100%', 
-                    padding: '8px 12px', 
-                    background: '#131b2e', 
-                    border: '1px solid #334155', 
-                    borderRadius: '6px', 
-                    marginTop: '4px', 
-                    fontSize: '13px', 
-                    color: '#f8fafc',
-                    boxSizing: 'border-box'
-                  }} 
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password *</label>
-                <input 
-                  name="reg_password" 
-                  type="password" 
-                  placeholder="At least 4 characters" 
-                  required 
-                  minLength={4} 
-                  style={{ 
-                    width: '100%', 
-                    padding: '8px 12px', 
-                    background: '#131b2e', 
-                    border: '1px solid #334155', 
-                    borderRadius: '6px', 
-                    marginTop: '4px', 
-                    fontSize: '13px', 
-                    color: '#f8fafc',
-                    boxSizing: 'border-box'
-                  }} 
-                />
-              </div>
-              <button 
-                type="submit" 
-                disabled={authLoading} 
-                className="btn-primary" 
-                style={{ 
-                  width: '100%', 
-                  justifyContent: 'center', 
-                  marginTop: '6px', 
-                  padding: '10px 0', 
-                  background: 'linear-gradient(135deg, #059669, #10b981)',
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.25)'
-                }}
-              >
-                <User size={14} /> {authLoading ? 'Creating Account...' : 'Register & Enter Workspace'}
-              </button>
-              <div style={{ fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
-                Personal workspace & models are securely persisted in SQLite.
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
+      <LandingPageView
+        onLogin={handleLogin}
+        onRegister={handleRegister}
+        onQuickDemo={handleQuickLogin}
+        authLoading={authLoading}
+        authError={authError}
+        authTab={authTab}
+        setAuthTab={setAuthTab}
+        showAuthModal={showAuthModal}
+        setShowAuthModal={setShowAuthModal}
+        isLoggedIn={false}
+        onEnterWorkspace={() => {
+          setAuthTab('login');
+          setShowAuthModal(true);
+        }}
+      />
     );
   }
 
@@ -1161,6 +928,13 @@ export default function App() {
             >
               <LayoutDashboard size={13} color="#f43f5e" /> <span className="label-text">Executive Studio</span>
             </button>
+            <button 
+              className={`view-mode-btn ${viewMode === 'landing' ? 'active' : ''}`}
+              onClick={() => setViewMode('landing')}
+              title="Platform Landing Page & Architecture Overview"
+            >
+              <Globe size={13} color="#a855f7" /> <span className="label-text">Overview</span>
+            </button>
           </div>
 
           {/* ZONE 3 (RIGHT): KERNEL STATUS & ACTIONS, TOOLS MENU, SHARE & USER */}
@@ -1339,7 +1113,23 @@ export default function App() {
         </div>
 
         {/* BODY AREA */}
-        {viewMode === 'streamlit' ? (
+        {viewMode === 'landing' ? (
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            <LandingPageView
+              onLogin={handleLogin}
+              onRegister={handleRegister}
+              onQuickDemo={handleQuickLogin}
+              authLoading={authLoading}
+              authError={authError}
+              authTab={authTab}
+              setAuthTab={setAuthTab}
+              showAuthModal={showAuthModal}
+              setShowAuthModal={setShowAuthModal}
+              isLoggedIn={true}
+              onEnterWorkspace={() => setViewMode('notebook')}
+            />
+          </div>
+        ) : viewMode === 'streamlit' ? (
           <StreamlitView token={token} />
         ) : viewMode === 'market_depth' ? (
           <MarketDepthView activeSymbol={activeMarketSymbol} onSymbolChange={setActiveMarketSymbol} />

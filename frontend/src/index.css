@@ -1782,3 +1782,27 @@ body {
     padding: 5px 8px;
   }
 }
+
+/* ========================================================
+   LANDING PAGE RESPONSIVE UTILITIES
+======================================================== */
+.landing-page-root {
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 960px) {
+  .landing-nav-links {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-hero-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .landing-hero-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
