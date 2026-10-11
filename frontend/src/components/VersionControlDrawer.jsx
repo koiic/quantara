@@ -157,7 +157,7 @@ export default function VersionControlDrawer({
           ) : (
             <div>
               {/* Commit Input Box */}
-              <div style={{ background: 'var(--bg-cell-output)', padding: '14px', borderRadius: '8px', marginBottom: '20px', border: '1px solid var(--border-color)' }}>
+              <div style={{ background: '#F9FAFB', padding: '14px', borderRadius: '8px', marginBottom: '20px', border: '1px solid var(--border-color)' }}>
                 <label className="field-label">COMMIT NEW CHECKPOINT</label>
                 <input 
                   className="input-field"

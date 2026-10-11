@@ -306,7 +306,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
                 <p style={{ fontSize: '13px', color: 'var(--text-main)', lineHeight: 1.5 }}>
                   Trading across Saudi Tadawul (Sun–Thu), US/Europe (Mon–Fri), and FX (24/5) requires strict timezone standardization without forward-peeking.
                 </p>
-                <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '12px', marginTop: '10px' }}>
+                <div style={{ background: '#F9FAFB', padding: '12px', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '12px', marginTop: '10px' }}>
                   <div>📅 <b>Saudi Trading Week:</b> Sunday through Thursday (10:00 - 15:00 AST). Closed Friday.</div>
                   <div style={{ marginTop: '6px' }}>🛢️ <b>Brent Crude Coupling:</b> Saudi morning opening prices ingest Friday's US close + weekend physical oil news buffer.</div>
                   <div style={{ marginTop: '6px' }}>🛡️ <b>Circuit Breaker Rules:</b> ±10% Daily Static Limit enforced.</div>
@@ -376,7 +376,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
                 </div>
 
                 {fracDiffResult && (
-                  <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '12px' }}>
+                  <div style={{ background: '#F9FAFB', padding: '12px', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '12px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                       <span>ADF p-value: <b>{fracDiffResult.adf_pvalue}</b></span>
                       <span>Memory Retention: <b>{(fracDiffResult.memory_correlation * 100).toFixed(1)}%</b></span>
@@ -409,7 +409,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>
                       Live Observation Tensor Vector $s_t$:
                     </div>
-                    <pre style={{ background: '#0f172a', color: '#38bdf8', padding: '10px', borderRadius: '6px', fontSize: '11px', margin: 0, overflowX: 'auto' }}>
+                    <pre style={{ background: '#1E1E24', color: '#38bdf8', padding: '10px', borderRadius: '6px', fontSize: '11px', margin: 0, overflowX: 'auto', border: '1px solid #2D3748' }}>
                       [{stateResult.sample_observation_vector.join(', ')}]
                     </pre>
                   </div>
@@ -477,7 +477,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
               </div>
 
               {rewardResult && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'var(--bg-cell-output)', borderRadius: '6px', fontSize: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: '#F9FAFB', border: '1px solid var(--border-color)', borderRadius: '6px', fontSize: '12px', color: 'var(--text-main)' }}>
                   <span>Simulated Bars: <b>{rewardResult.steps_simulated}</b></span>
                   <span>Mean Step Reward: <b>{rewardResult.mean_reward}</b></span>
                   <span>Turnover Fee Drag: <b style={{ color: '#ef4444' }}>-{rewardResult.turnover_drag_pct}%</b></span>
@@ -509,7 +509,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
               </div>
 
               {gymEnvCode && (
-                <pre style={{ background: '#0f172a', color: '#e2e8f0', padding: '14px', borderRadius: '6px', fontSize: '12px', maxHeight: '220px', overflowY: 'auto' }}>
+                <pre style={{ background: '#1E1E24', color: '#e2e8f0', padding: '14px', borderRadius: '6px', fontSize: '12px', maxHeight: '220px', overflowY: 'auto', border: '1px solid #2D3748' }}>
                   <code>{gymEnvCode}</code>
                 </pre>
               )}
@@ -589,7 +589,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
 
                 {diagResult && (
                   <div>
-                    <div style={{ padding: '10px 12px', borderRadius: '6px', background: '#f8fafc', borderLeft: `4px solid ${diagResult.health_color}`, marginBottom: '14px', fontSize: '12px', fontWeight: 600 }}>
+                    <div style={{ padding: '10px 12px', borderRadius: '6px', background: '#F9FAFB', border: '1px solid var(--border-color)', borderLeft: `4px solid ${diagResult.health_color}`, marginBottom: '14px', fontSize: '12px', fontWeight: 600 }}>
                       {diagResult.action_health}
                     </div>
 
@@ -600,8 +600,8 @@ export default function DRLStudioView({ token, onInsertCell }) {
                       {diagResult.action_histogram.map((b, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px' }}>
                           <span style={{ width: '180px' }}>{b.bucket}</span>
-                          <div style={{ flex: 1, background: '#e2e8f0', height: '8px', borderRadius: '4px', margin: '0 10px', overflow: 'hidden' }}>
-                            <div style={{ width: `${(b.frequency / 35) * 100}%`, background: '#2563eb', height: '100%' }} />
+                          <div style={{ flex: 1, background: 'var(--border-color)', height: '8px', borderRadius: '4px', margin: '0 10px', overflow: 'hidden' }}>
+                            <div style={{ width: `${(b.frequency / 35) * 100}%`, background: '#FF4B4B', height: '100%' }} />
                           </div>
                           <span style={{ fontWeight: 600 }}>{b.frequency}</span>
                         </div>
@@ -630,7 +630,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
                 {cpcvResult && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '240px', overflowY: 'auto' }}>
                     {cpcvResult.out_of_distribution_regimes.map((reg, idx) => (
-                      <div key={idx} style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '12px' }}>
+                      <div key={idx} style={{ padding: '8px 12px', background: '#F9FAFB', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '12px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
                           <span>{reg.name}</span>
                           <span style={{ color: '#10b981' }}>{reg.policy_return} (Sharpe {reg.sharpe})</span>
@@ -691,7 +691,7 @@ export default function DRLStudioView({ token, onInsertCell }) {
               {quickstartData && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   {quickstartData.checklist.map((item, idx) => (
-                    <div key={idx} style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '12px' }}>
+                    <div key={idx} style={{ padding: '8px 12px', background: '#F9FAFB', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, marginBottom: '2px' }}>
                         <span>{item.item}</span>
                         <span style={{ color: '#10b981', fontWeight: 700 }}>✓ {item.status}</span>
@@ -735,25 +735,25 @@ export default function DRLStudioView({ token, onInsertCell }) {
                   <span>EXECUTIVE METRIC HANDOFF SUMMARY ({quickstartData.preset.title})</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginTop: '10px' }}>
-                  <div style={{ padding: '10px', background: 'var(--bg-cell-output)', borderRadius: '6px' }}>
+                  <div style={{ padding: '12px', background: '#F9FAFB', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>ANNUALIZED RETURN</div>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: '#10b981', marginTop: '4px' }}>
                       +{quickstartData.preset.expected_annual_return}%
                     </div>
                   </div>
-                  <div style={{ padding: '10px', background: 'var(--bg-cell-output)', borderRadius: '6px' }}>
+                  <div style={{ padding: '12px', background: '#F9FAFB', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>SHARPE RATIO</div>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: '#2563eb', marginTop: '4px' }}>
                       {quickstartData.preset.expected_sharpe}
                     </div>
                   </div>
-                  <div style={{ padding: '10px', background: 'var(--bg-cell-output)', borderRadius: '6px' }}>
+                  <div style={{ padding: '12px', background: '#F9FAFB', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>FRICTION DRAG</div>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: '#ef4444', marginTop: '4px' }}>
                       -{quickstartData.performance_summary.friction_drag_pct}%
                     </div>
                   </div>
-                  <div style={{ padding: '10px', background: 'var(--bg-cell-output)', borderRadius: '6px' }}>
+                  <div style={{ padding: '12px', background: '#F9FAFB', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>PRODUCTION READINESS</div>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: '#10b981', marginTop: '4px' }}>
                       {quickstartData.readiness_score}/100

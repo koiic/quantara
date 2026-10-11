@@ -169,13 +169,13 @@ export default function StagingShadowView({ token }) {
   const isCurrentProviderOffline = currentProviderObj.status !== 'ONLINE';
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: '#090d16', color: '#f1f5f9', overflow: 'hidden' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg-main)', color: 'var(--text-main)', overflow: 'hidden' }}>
       
       {/* TOP HEADER & STAGING MODE SELECTOR */}
       <div className="staging-header-bar">
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ background: mode === 'PAPER' ? '#0284c7' : '#7c3aed', padding: '6px', borderRadius: '6px', color: 'white' }}>
+            <div style={{ background: mode === 'PAPER' ? '#FF4B4B' : '#111827', padding: '6px', borderRadius: '6px', color: 'white' }}>
               <Layers size={20} />
             </div>
             <div>
@@ -185,15 +185,15 @@ export default function StagingShadowView({ token }) {
                   fontSize: '11px', 
                   padding: '2px 8px', 
                   borderRadius: '12px', 
-                  background: mode === 'PAPER' ? 'rgba(2, 132, 199, 0.2)' : 'rgba(124, 58, 237, 0.2)',
-                  color: mode === 'PAPER' ? '#38bdf8' : '#c084fc',
+                  background: mode === 'PAPER' ? 'rgba(255, 75, 75, 0.1)' : 'rgba(17, 24, 39, 0.08)',
+                  color: mode === 'PAPER' ? '#FF4B4B' : '#111827',
                   fontWeight: 600,
-                  border: `1px solid ${mode === 'PAPER' ? '#0284c7' : '#7c3aed'}`
+                  border: `1px solid ${mode === 'PAPER' ? '#FECDD3' : '#E5E7EB'}`
                 }}>
                   {mode === 'PAPER' ? 'SANDBOX SIMULATOR' : 'CANARY SHADOW MIRROR'}
                 </span>
               </div>
-              <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 Multi-venue order routing for Saudi Equities (TASI), US Stocks & Crypto
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function StagingShadowView({ token }) {
 
         {/* MODE SWITCHER PILL */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', background: '#1e293b', borderRadius: '8px', padding: '3px', border: '1px solid #334155' }}>
+          <div style={{ display: 'flex', background: '#F3F4F6', borderRadius: '8px', padding: '3px', border: '1px solid var(--border-color)' }}>
             <button
               onClick={() => setMode('PAPER')}
               style={{
@@ -212,8 +212,8 @@ export default function StagingShadowView({ token }) {
                 padding: '6px 14px',
                 borderRadius: '6px',
                 border: 'none',
-                background: mode === 'PAPER' ? '#0284c7' : 'transparent',
-                color: mode === 'PAPER' ? '#ffffff' : '#94a3b8',
+                background: mode === 'PAPER' ? '#FF4B4B' : 'transparent',
+                color: mode === 'PAPER' ? '#ffffff' : 'var(--text-muted)',
                 fontWeight: 600,
                 fontSize: '13px',
                 cursor: 'pointer',
@@ -231,8 +231,8 @@ export default function StagingShadowView({ token }) {
                 padding: '6px 14px',
                 borderRadius: '6px',
                 border: 'none',
-                background: mode === 'SHADOW' ? '#7c3aed' : 'transparent',
-                color: mode === 'SHADOW' ? '#ffffff' : '#94a3b8',
+                background: mode === 'SHADOW' ? '#111827' : 'transparent',
+                color: mode === 'SHADOW' ? '#ffffff' : 'var(--text-muted)',
                 fontWeight: 600,
                 fontSize: '13px',
                 cursor: 'pointer',
@@ -252,9 +252,9 @@ export default function StagingShadowView({ token }) {
               gap: '6px',
               padding: '6px 12px',
               borderRadius: '6px',
-              background: '#1e293b',
-              border: '1px solid #334155',
-              color: '#94a3b8',
+              background: '#FFFFFF',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-secondary)',
               fontSize: '12px',
               cursor: 'pointer'
             }}
@@ -268,27 +268,27 @@ export default function StagingShadowView({ token }) {
       {portfolio && (
         <div className="portfolio-stats-ribbon">
           <div>
-            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: 600 }}>Total Equity</div>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Total Equity</div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', marginTop: '2px' }}>
               ${portfolio.total_equity_usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               ≈ {portfolio.total_equity_sar.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} SAR
             </div>
           </div>
 
           <div>
-            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: 600 }}>Cash Available</div>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: '#f8fafc', marginTop: '2px' }}>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Cash Available</div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', marginTop: '2px' }}>
               ${portfolio.cash_balance_usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               ≈ {portfolio.cash_balance_sar.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} SAR
             </div>
           </div>
 
           <div>
-            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: 600 }}>Unrealized PnL</div>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Unrealized PnL</div>
             <div style={{ 
               fontSize: '18px', 
               fontWeight: 700, 
@@ -301,11 +301,11 @@ export default function StagingShadowView({ token }) {
               {portfolio.unrealized_pnl_usd >= 0 ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}
               ${portfolio.unrealized_pnl_usd >= 0 ? '+' : ''}{portfolio.unrealized_pnl_usd.toFixed(2)}
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>Mark-to-market</div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Mark-to-market</div>
           </div>
 
           <div>
-            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: 600 }}>Realized PnL</div>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Realized PnL</div>
             <div style={{ 
               fontSize: '18px', 
               fontWeight: 700, 
@@ -314,25 +314,25 @@ export default function StagingShadowView({ token }) {
             }}>
               ${portfolio.realized_pnl_usd >= 0 ? '+' : ''}{portfolio.realized_pnl_usd.toFixed(2)}
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>Closed trades</div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Closed trades</div>
           </div>
 
           <div>
-            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: 600 }}>Return / Win Rate</div>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: '#38bdf8', marginTop: '2px' }}>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Return / Win Rate</div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: '#2563eb', marginTop: '2px' }}>
               {portfolio.total_return_pct >= 0 ? '+' : ''}{portfolio.total_return_pct.toFixed(2)}%
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               Win Rate: {portfolio.win_rate}%
             </div>
           </div>
 
           <div>
-            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: 600 }}>Active Exposures</div>
-            <div style={{ fontSize: '18px', fontWeight: 700, color: '#cbd5e1', marginTop: '2px' }}>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Active Exposures</div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', marginTop: '2px' }}>
               {portfolio.positions_count} Positions
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               {mode === 'SHADOW' ? 'Zero Live Risk' : 'Simulated Ledger'}
             </div>
           </div>
@@ -340,9 +340,10 @@ export default function StagingShadowView({ token }) {
       )}
 
       {/* PROVIDER STATUS TICKER BAR */}
+      {/* PROVIDER STATUS TICKER BAR */}
       <div style={{ 
-        background: '#070b14', 
-        borderBottom: '1px solid #1e293b', 
+        background: '#F9FAFB', 
+        borderBottom: '1px solid var(--border-color)', 
         padding: '8px 24px',
         display: 'flex',
         alignItems: 'center',
@@ -350,7 +351,7 @@ export default function StagingShadowView({ token }) {
         overflowX: 'auto',
         fontSize: '12px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontWeight: 600, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
           <Server size={14} /> Execution Gateways:
         </div>
         {providers.map(p => (
@@ -364,8 +365,8 @@ export default function StagingShadowView({ token }) {
               gap: '6px', 
               padding: '4px 10px', 
               borderRadius: '6px', 
-              background: '#0f172a',
-              border: `1px solid ${p.status === 'ONLINE' ? '#1e293b' : '#7f1d1d'}`,
+              background: '#FFFFFF',
+              border: `1px solid ${p.status === 'ONLINE' ? 'var(--border-color)' : '#FECDD3'}`,
               cursor: 'pointer',
               flexShrink: 0
             }}
@@ -376,14 +377,14 @@ export default function StagingShadowView({ token }) {
               borderRadius: '50%', 
               background: p.status === 'ONLINE' ? '#10b981' : '#ef4444' 
             }} />
-            <span style={{ fontWeight: 600, color: '#e2e8f0' }}>{p.name.split(' ')[0]}</span>
-            <span style={{ color: '#64748b', fontSize: '11px' }}>({p.latency_ms}ms)</span>
+            <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{p.name.split(' ')[0]}</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>({p.latency_ms}ms)</span>
             <span style={{ 
               fontSize: '10px', 
               padding: '1px 5px', 
               borderRadius: '4px',
-              background: p.status === 'ONLINE' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.2)',
-              color: p.status === 'ONLINE' ? '#34d399' : '#f87171',
+              background: p.status === 'ONLINE' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+              color: p.status === 'ONLINE' ? '#059669' : '#dc2626',
               fontWeight: 600
             }}>
               {p.status}
@@ -396,9 +397,9 @@ export default function StagingShadowView({ token }) {
       {actionMessage && (
         <div style={{ 
           padding: '10px 24px', 
-          background: actionMessage.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-          color: actionMessage.type === 'success' ? '#34d399' : '#f87171',
-          borderBottom: `1px solid ${actionMessage.type === 'success' ? '#059669' : '#dc2626'}`,
+          background: actionMessage.type === 'success' ? '#ECFDF5' : '#FEF2F2',
+          color: actionMessage.type === 'success' ? '#065F46' : '#991B1B',
+          borderBottom: `1px solid ${actionMessage.type === 'success' ? '#A7F3D0' : '#FECDD3'}`,
           fontSize: '13px',
           display: 'flex',
           alignItems: 'center',
@@ -415,14 +416,14 @@ export default function StagingShadowView({ token }) {
         {/* LEFT COLUMN: ORDER ENTRY TICKET */}
         <div className="staging-order-ticket-col">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontWeight: 700, fontSize: '15px', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Zap size={16} color="#38bdf8" /> Order Ticket
+            <span style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Zap size={16} color="#FF4B4B" /> Order Ticket
             </span>
             <span style={{ 
               fontSize: '11px', 
               padding: '2px 8px', 
               borderRadius: '4px',
-              background: mode === 'PAPER' ? '#0369a1' : '#6d28d9',
+              background: mode === 'PAPER' ? '#FF4B4B' : '#111827',
               color: 'white',
               fontWeight: 600
             }}>
@@ -434,7 +435,7 @@ export default function StagingShadowView({ token }) {
             
             {/* Symbol Selector */}
             <div>
-              <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: '6px', display: 'block' }}>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', marginBottom: '6px', display: 'block' }}>
                 Target Symbol
               </label>
               <select
@@ -444,9 +445,9 @@ export default function StagingShadowView({ token }) {
                   width: '100%',
                   padding: '9px 12px',
                   borderRadius: '6px',
-                  background: '#1e293b',
-                  border: '1px solid #334155',
-                  color: '#f8fafc',
+                  background: '#FFFFFF',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-main)',
                   fontSize: '13px',
                   fontWeight: 600
                 }}
@@ -467,7 +468,7 @@ export default function StagingShadowView({ token }) {
                   <option value="SOL-USD">SOL-USD - Solana</option>
                 </optgroup>
               </select>
-              <div style={{ marginTop: '6px', fontSize: '12px', display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}>
+              <div style={{ marginTop: '6px', fontSize: '12px', display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
                 <span>Mark Price: <b>{currentAsset.price} {currentAsset.currency}</b></span>
                 <span style={{ color: currentAsset.change_24h >= 0 ? '#10b981' : '#ef4444' }}>
                   {currentAsset.change_24h >= 0 ? '+' : ''}{currentAsset.change_24h}%
@@ -483,9 +484,9 @@ export default function StagingShadowView({ token }) {
                 style={{
                   padding: '10px 0',
                   borderRadius: '6px',
-                  border: 'none',
-                  background: side === 'BUY' ? '#10b981' : '#1e293b',
-                  color: side === 'BUY' ? '#ffffff' : '#94a3b8',
+                  border: side === 'BUY' ? '1px solid #10b981' : '1px solid var(--border-color)',
+                  background: side === 'BUY' ? '#10b981' : '#F3F4F6',
+                  color: side === 'BUY' ? '#ffffff' : 'var(--text-secondary)',
                   fontWeight: 700,
                   fontSize: '13px',
                   cursor: 'pointer',
@@ -500,9 +501,9 @@ export default function StagingShadowView({ token }) {
                 style={{
                   padding: '10px 0',
                   borderRadius: '6px',
-                  border: 'none',
-                  background: side === 'SELL' ? '#ef4444' : '#1e293b',
-                  color: side === 'SELL' ? '#ffffff' : '#94a3b8',
+                  border: side === 'SELL' ? '1px solid #ef4444' : '1px solid var(--border-color)',
+                  background: side === 'SELL' ? '#ef4444' : '#F3F4F6',
+                  color: side === 'SELL' ? '#ffffff' : 'var(--text-secondary)',
                   fontWeight: 700,
                   fontSize: '13px',
                   cursor: 'pointer',
@@ -516,7 +517,7 @@ export default function StagingShadowView({ token }) {
             {/* Order Type */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600, marginBottom: '6px', display: 'block' }}>ORDER TYPE</label>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '6px', display: 'block' }}>ORDER TYPE</label>
                 <select
                   value={orderType}
                   onChange={(e) => setOrderType(e.target.value)}
@@ -524,9 +525,9 @@ export default function StagingShadowView({ token }) {
                     width: '100%',
                     padding: '8px 10px',
                     borderRadius: '6px',
-                    background: '#1e293b',
-                    border: '1px solid #334155',
-                    color: '#f8fafc',
+                    background: '#FFFFFF',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-main)',
                     fontSize: '13px'
                   }}
                 >
@@ -536,7 +537,7 @@ export default function StagingShadowView({ token }) {
               </div>
 
               <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600, marginBottom: '6px', display: 'block' }}>QUANTITY</label>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '6px', display: 'block' }}>QUANTITY</label>
                 <input
                   type="number"
                   step="any"
@@ -547,9 +548,9 @@ export default function StagingShadowView({ token }) {
                     width: '100%',
                     padding: '8px 10px',
                     borderRadius: '6px',
-                    background: '#1e293b',
-                    border: '1px solid #334155',
-                    color: '#f8fafc',
+                    background: '#FFFFFF',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-main)',
                     fontSize: '13px',
                     fontWeight: 600
                   }}
@@ -560,7 +561,7 @@ export default function StagingShadowView({ token }) {
             {/* Limit Price (if LIMIT order) */}
             {orderType === 'LIMIT' && (
               <div>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
                   LIMIT PRICE ({currentAsset.currency})
                 </label>
                 <input
@@ -573,9 +574,9 @@ export default function StagingShadowView({ token }) {
                     width: '100%',
                     padding: '8px 10px',
                     borderRadius: '6px',
-                    background: '#1e293b',
-                    border: '1px solid #334155',
-                    color: '#f8fafc',
+                    background: '#FFFFFF',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-main)',
                     fontSize: '13px'
                   }}
                 />
@@ -585,9 +586,9 @@ export default function StagingShadowView({ token }) {
             {/* Execution Gateway Selector */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>ROUTING GATEWAY</label>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>ROUTING GATEWAY</label>
                 {isCurrentProviderOffline && (
-                  <span style={{ fontSize: '11px', color: '#f87171', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <span style={{ fontSize: '11px', color: '#dc2626', display: 'flex', alignItems: 'center', gap: '3px' }}>
                     <AlertTriangle size={12} /> Auto-Fallback
                   </span>
                 )}
@@ -599,9 +600,9 @@ export default function StagingShadowView({ token }) {
                   width: '100%',
                   padding: '8px 10px',
                   borderRadius: '6px',
-                  background: '#1e293b',
-                  border: `1px solid ${isCurrentProviderOffline ? '#b91c1c' : '#334155'}`,
-                  color: '#f8fafc',
+                  background: '#FFFFFF',
+                  border: `1px solid ${isCurrentProviderOffline ? '#ef4444' : 'var(--border-color)'}`,
+                  color: 'var(--text-main)',
                   fontSize: '13px'
                 }}
               >
@@ -613,7 +614,7 @@ export default function StagingShadowView({ token }) {
               </select>
 
               {isCurrentProviderOffline && (
-                <div style={{ marginTop: '6px', fontSize: '11px', color: '#fca5a5', background: 'rgba(239, 68, 68, 0.1)', padding: '6px 8px', borderRadius: '4px' }}>
+                <div style={{ marginTop: '6px', fontSize: '11px', color: '#b91c1c', background: '#FEF2F2', padding: '6px 8px', borderRadius: '4px', border: '1px solid #FECDD3' }}>
                   Gateway is disconnected. Quantara will automatically route to internal sandbox with dark canary logging.
                 </div>
               )}
@@ -621,7 +622,7 @@ export default function StagingShadowView({ token }) {
 
             {/* Strategy Audit Note */}
             <div>
-              <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600, marginBottom: '6px', display: 'block' }}>STRATEGY NOTE (AUDIT TRAIL)</label>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '6px', display: 'block' }}>STRATEGY NOTE (AUDIT TRAIL)</label>
               <input
                 type="text"
                 placeholder="e.g. DRL Momentum Signal #42"
@@ -631,28 +632,28 @@ export default function StagingShadowView({ token }) {
                   width: '100%',
                   padding: '7px 10px',
                   borderRadius: '6px',
-                  background: '#1e293b',
-                  border: '1px solid #334155',
-                  color: '#f8fafc',
+                  background: '#FFFFFF',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-main)',
                   fontSize: '12px'
                 }}
               />
             </div>
 
             {/* Friction Estimate Panel */}
-            <div style={{ background: '#070b14', borderRadius: '6px', padding: '10px 12px', border: '1px solid #1e293b', fontSize: '11px' }}>
-              <div style={{ color: '#64748b', fontWeight: 600, marginBottom: '4px' }}>ESTIMATED VENUE IMPACT</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8', marginBottom: '2px' }}>
+            <div style={{ background: '#F9FAFB', borderRadius: '6px', padding: '10px 12px', border: '1px solid var(--border-color)', fontSize: '11px' }}>
+              <div style={{ color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>ESTIMATED VENUE IMPACT</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', marginBottom: '2px' }}>
                 <span>Order Notional:</span>
-                <span>{(quantity * currentAsset.price).toFixed(2)} {currentAsset.currency}</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{(quantity * currentAsset.price).toFixed(2)} {currentAsset.currency}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8', marginBottom: '2px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', marginBottom: '2px' }}>
                 <span>Est. Slippage:</span>
-                <span style={{ color: '#38bdf8' }}>~{currentAsset.category === 'crypto' ? '3.5' : '15.2'} bps</span>
+                <span style={{ color: '#2563eb', fontWeight: 600 }}>~{currentAsset.category === 'crypto' ? '3.5' : '15.2'} bps</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
                 <span>Tadawul Fee + VAT / Comm:</span>
-                <span>{selectedSymbol.includes('.SR') ? '15.5 bps + 15% VAT' : '1.0 bps'}</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{selectedSymbol.includes('.SR') ? '15.5 bps + 15% VAT' : '1.0 bps'}</span>
               </div>
             </div>
 
@@ -670,7 +671,7 @@ export default function StagingShadowView({ token }) {
                 fontSize: '14px',
                 cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 opacity: isSubmitting ? 0.7 : 1,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -684,8 +685,8 @@ export default function StagingShadowView({ token }) {
           
           {/* TABS NAVIGATION */}
           <div style={{ 
-            background: '#0d1322', 
-            borderBottom: '1px solid #1e293b', 
+            background: '#FFFFFF', 
+            borderBottom: '1px solid var(--border-color)', 
             padding: '0 16px', 
             display: 'flex', 
             gap: '8px',
@@ -709,8 +710,8 @@ export default function StagingShadowView({ token }) {
                     padding: '14px 16px',
                     border: 'none',
                     background: 'transparent',
-                    color: activeTab === t.id ? '#38bdf8' : '#94a3b8',
-                    borderBottom: activeTab === t.id ? '2px solid #38bdf8' : '2px solid transparent',
+                    color: activeTab === t.id ? '#FF4B4B' : 'var(--text-muted)',
+                    borderBottom: activeTab === t.id ? '2px solid #FF4B4B' : '2px solid transparent',
                     fontWeight: 600,
                     fontSize: '13px',
                     display: 'flex',
@@ -750,9 +751,9 @@ export default function StagingShadowView({ token }) {
                 )}
 
                 {positions.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
+                  <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
                     <TrendingUp size={42} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
-                    <div style={{ fontSize: '15px', fontWeight: 600, color: '#94a3b8' }}>No Open Positions</div>
+                    <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>No Open Positions</div>
                     <div style={{ fontSize: '13px', marginTop: '4px' }}>
                       Place an order on the left ticket to open a position in Saudi Tadawul, US Stocks, or Crypto.
                     </div>
@@ -761,7 +762,7 @@ export default function StagingShadowView({ token }) {
                   <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
                       <thead>
-                        <tr style={{ borderBottom: '1px solid #1e293b', color: '#64748b', fontSize: '11px', textTransform: 'uppercase' }}>
+                        <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontSize: '11px', textTransform: 'uppercase' }}>
                           <th style={{ padding: '10px' }}>Symbol / Asset</th>
                           <th style={{ padding: '10px' }}>Quantity</th>
                           <th style={{ padding: '10px' }}>Entry Price</th>
@@ -774,17 +775,17 @@ export default function StagingShadowView({ token }) {
                       </thead>
                       <tbody>
                         {positions.map(p => (
-                          <tr key={p.id} style={{ borderBottom: '1px solid #0f172a' }}>
-                            <td style={{ padding: '12px 10px', fontWeight: 600, color: '#f8fafc' }}>
+                          <tr key={p.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                            <td style={{ padding: '12px 10px', fontWeight: 600, color: 'var(--text-main)' }}>
                               <div>{p.symbol}</div>
-                              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 400 }}>{p.name}</div>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>{p.name}</div>
                             </td>
-                            <td style={{ padding: '12px 10px' }}>{p.quantity}</td>
-                            <td style={{ padding: '12px 10px' }}>{p.avg_entry_price} {p.currency}</td>
-                            <td style={{ padding: '12px 10px', fontWeight: 600 }}>{p.current_price} {p.currency}</td>
-                            <td style={{ padding: '12px 10px' }}>
+                            <td style={{ padding: '12px 10px', color: 'var(--text-secondary)' }}>{p.quantity}</td>
+                            <td style={{ padding: '12px 10px', color: 'var(--text-secondary)' }}>{p.avg_entry_price} {p.currency}</td>
+                            <td style={{ padding: '12px 10px', fontWeight: 600, color: 'var(--text-main)' }}>{p.current_price} {p.currency}</td>
+                            <td style={{ padding: '12px 10px', color: 'var(--text-main)' }}>
                               {p.market_value_native.toLocaleString()} {p.currency}
-                              {p.currency === 'SAR' && <span style={{ fontSize: '11px', color: '#64748b' }}> (${(p.market_value_native / SAR_USD_PEG).toFixed(2)})</span>}
+                              {p.currency === 'SAR' && <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}> (${(p.market_value_native / SAR_USD_PEG).toFixed(2)})</span>}
                             </td>
                             <td style={{ 
                               padding: '12px 10px', 
@@ -806,9 +807,9 @@ export default function StagingShadowView({ token }) {
                                 style={{
                                   padding: '5px 12px',
                                   borderRadius: '5px',
-                                  border: '1px solid #ef4444',
-                                  background: 'rgba(239, 68, 68, 0.15)',
-                                  color: '#f87171',
+                                  border: '1px solid #FECDD3',
+                                  background: '#FEF2F2',
+                                  color: '#dc2626',
                                   fontSize: '11px',
                                   fontWeight: 600,
                                   cursor: 'pointer'
@@ -830,14 +831,14 @@ export default function StagingShadowView({ token }) {
             {activeTab === 'blotter' && (
               <div style={{ overflowX: 'auto' }}>
                 {orders.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
+                  <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
                     <Clock size={40} style={{ margin: '0 auto 10px', opacity: 0.3 }} />
                     <div>No order records in blotter yet.</div>
                   </div>
                 ) : (
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #1e293b', color: '#64748b', fontSize: '11px', textTransform: 'uppercase' }}>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontSize: '11px', textTransform: 'uppercase' }}>
                         <th style={{ padding: '8px' }}>Timestamp</th>
                         <th style={{ padding: '8px' }}>Symbol</th>
                         <th style={{ padding: '8px' }}>Side</th>
@@ -852,25 +853,26 @@ export default function StagingShadowView({ token }) {
                     </thead>
                     <tbody>
                       {orders.map(o => (
-                        <tr key={o.id} style={{ borderBottom: '1px solid #0f172a' }}>
-                          <td style={{ padding: '10px 8px', color: '#94a3b8' }}>{o.created_at}</td>
-                          <td style={{ padding: '10px 8px', fontWeight: 600, color: '#f8fafc' }}>{o.symbol}</td>
+                        <tr key={o.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                          <td style={{ padding: '10px 8px', color: 'var(--text-muted)' }}>{o.created_at}</td>
+                          <td style={{ padding: '10px 8px', fontWeight: 600, color: 'var(--text-main)' }}>{o.symbol}</td>
                           <td style={{ padding: '10px 8px', fontWeight: 700, color: o.side === 'BUY' ? '#10b981' : '#ef4444' }}>
                             {o.side}
                           </td>
-                          <td style={{ padding: '10px 8px' }}>{o.quantity}</td>
-                          <td style={{ padding: '10px 8px' }}>{o.requested_price}</td>
-                          <td style={{ padding: '10px 8px', fontWeight: 600 }}>{o.fill_price}</td>
-                          <td style={{ padding: '10px 8px', color: '#38bdf8' }}>{o.slippage_bps} bps</td>
-                          <td style={{ padding: '10px 8px', color: '#cbd5e1' }}>{o.provider_id}</td>
-                          <td style={{ padding: '10px 8px', color: '#94a3b8' }}>{o.latency_ms}ms</td>
+                          <td style={{ padding: '10px 8px', color: 'var(--text-secondary)' }}>{o.quantity}</td>
+                          <td style={{ padding: '10px 8px', color: 'var(--text-secondary)' }}>{o.requested_price}</td>
+                          <td style={{ padding: '10px 8px', fontWeight: 600, color: 'var(--text-main)' }}>{o.fill_price}</td>
+                          <td style={{ padding: '10px 8px', color: '#2563eb' }}>{o.slippage_bps} bps</td>
+                          <td style={{ padding: '10px 8px', color: 'var(--text-secondary)' }}>{o.provider_id}</td>
+                          <td style={{ padding: '10px 8px', color: 'var(--text-muted)' }}>{o.latency_ms}ms</td>
                           <td style={{ padding: '10px 8px' }}>
                             <span style={{ 
                               fontSize: '10px', 
                               padding: '2px 6px', 
                               borderRadius: '4px',
-                              background: o.status === 'FILLED' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(124, 58, 237, 0.2)',
-                              color: o.status === 'FILLED' ? '#34d399' : '#c084fc',
+                              background: o.status === 'FILLED' ? '#ECFDF5' : '#F5F3FF',
+                              color: o.status === 'FILLED' ? '#059669' : '#7c3aed',
+                              border: o.status === 'FILLED' ? '1px solid #A7F3D0' : '1px solid #DDD6FE',
                               fontWeight: 600
                             }}>
                               {o.status}
@@ -888,8 +890,8 @@ export default function StagingShadowView({ token }) {
             {activeTab === 'diagnostics' && analytics && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div style={{ 
-                  background: '#0d1322', 
-                  border: '1px solid #1e293b', 
+                  background: '#FFFFFF', 
+                  border: '1px solid var(--border-color)', 
                   borderRadius: '8px', 
                   padding: '20px',
                   display: 'grid',
@@ -897,44 +899,44 @@ export default function StagingShadowView({ token }) {
                   gap: '16px'
                 }}>
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Production Readiness</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Production Readiness</div>
                     <div style={{ fontSize: '28px', fontWeight: 800, color: '#10b981', marginTop: '4px' }}>
                       {analytics.production_readiness_score}/100
                     </div>
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Within 2σ slippage limit</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Within 2σ slippage limit</div>
                   </div>
 
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Avg Execution Drag</div>
-                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#38bdf8', marginTop: '4px' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Avg Execution Drag</div>
+                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#2563eb', marginTop: '4px' }}>
                       {analytics.avg_execution_drag_bps} bps
                     </div>
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Theoretical market impact</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Theoretical market impact</div>
                   </div>
 
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Avg Venue Latency</div>
-                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#c084fc', marginTop: '4px' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Avg Venue Latency</div>
+                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#8b5cf6', marginTop: '4px' }}>
                       {analytics.avg_network_latency_ms} ms
                     </div>
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Direct Gateway FIX/WebSocket</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Direct Gateway FIX/WebSocket</div>
                   </div>
 
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Simulated Fill Rate</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Simulated Fill Rate</div>
                     <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b', marginTop: '4px' }}>
                       {analytics.simulated_fill_rate_pct}%
                     </div>
-                    <div style={{ fontSize: '12px', color: '#94a3b8' }}>Top-of-book depth liquidity</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Top-of-book depth liquidity</div>
                   </div>
                 </div>
 
                 {/* INSTITUTIONAL EXPLANATION */}
-                <div style={{ background: '#0e172a', border: '1px solid #1e293b', borderRadius: '8px', padding: '20px' }}>
-                  <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ background: '#F9FAFB', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
+                  <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <ShieldCheck size={18} color="#10b981" /> Institutional Dark-Launch Protocols
                   </h4>
-                  <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
                     In tier-1 algorithmic trading firms, quantitative strategies are never directly wired to live financial exchanges. 
                     Instead, they run in <b>Shadow Mode</b> for a minimum of 14 trading days. 
                     During this period, Quantara intercepts every live algorithmic signal, matches it against real-time Level 2 order book depth, calculates non-linear market impact (Almgren-Chriss), and logs theoretical execution drag without exposing fund capital.
@@ -946,23 +948,23 @@ export default function StagingShadowView({ token }) {
             {/* TAB 4: PYTHON SDK GUIDE */}
             {activeTab === 'sdk' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ background: '#0e172a', border: '1px solid #1e293b', borderRadius: '8px', padding: '16px' }}>
-                  <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '8px', color: '#f8fafc' }}>
+                <div style={{ background: '#FFFFFF', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
+                  <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '8px', color: 'var(--text-main)' }}>
                     Automate Staging Execution from Quant Notebooks
                   </div>
-                  <div style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '14px' }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '14px' }}>
                     You can execute both Paper and Shadow orders programmatically inside your research notebook cells using the built-in <code>quantara</code> Python SDK:
                   </div>
 
                   <pre style={{ 
-                    background: '#070b14', 
+                    background: '#1E1E24', 
                     padding: '16px', 
                     borderRadius: '6px', 
-                    color: '#38bdf8', 
+                    color: '#e2e8f0', 
                     fontSize: '12px', 
                     fontFamily: 'monospace',
                     overflowX: 'auto',
-                    border: '1px solid #1e293b'
+                    border: '1px solid #2D3139'
                   }}>
 {`import quantara as qtr
 

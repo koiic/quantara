@@ -97,7 +97,7 @@ export default function ExecutiveBriefingModal({ isOpen, onClose, token, activeN
       <div className="modal-card" style={{ maxWidth: '820px' }} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '16px' }}>
-            <FileText size={18} color="#2563eb" />
+            <FileText size={18} color="#FF4B4B" />
             <span>Executive Briefing & Tear Sheet Generator</span>
           </div>
           <button className="btn-icon" onClick={onClose}><X size={18} /></button>
@@ -206,7 +206,7 @@ export default function ExecutiveBriefingModal({ isOpen, onClose, token, activeN
               onClick={handleDispatchSlack}
               disabled={isDispatching}
             >
-              <MessageSquare size={15} color="#0f7b6c" /> {isDispatching ? 'Dispatching...' : 'Send Slack Digest to CTO'}
+              <MessageSquare size={15} color="#10b981" /> {isDispatching ? 'Dispatching...' : 'Send Slack Digest to CTO'}
             </button>
           </div>
 
@@ -261,7 +261,7 @@ export default function ExecutiveBriefingModal({ isOpen, onClose, token, activeN
               </div>
               <div style={{ maxHeight: '160px', overflowY: 'auto' }}>
                 {pastReports.map((r, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--bg-cell-output)', borderRadius: '6px', marginBottom: '6px' }}>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#F9FAFB', border: '1px solid var(--border-color)', borderRadius: '6px', marginBottom: '6px' }}>
                     <div>
                       <span style={{ fontWeight: 600, fontSize: '13px' }}>{r.title}</span>
                       <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: '10px' }}>

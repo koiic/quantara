@@ -713,7 +713,7 @@ export default function App() {
       >
         <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '700', color: 'var(--text-main)', fontSize: '15px' }}>
-            <div style={{ background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', borderRadius: '6px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#FF4B4B', color: 'white', borderRadius: '6px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Terminal size={16} />
             </div>
             Quantara Hub
@@ -898,42 +898,42 @@ export default function App() {
               onClick={() => setViewMode('staging_shadow')}
               title="Paper Trading & Shadow Dark-Launch Execution Staging"
             >
-              <Layers size={13} color="#38bdf8" /> <span className="label-text">Staging</span>
+              <Layers size={13} /> <span className="label-text">Staging</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'drl_studio' ? 'active' : ''}`}
               onClick={() => setViewMode('drl_studio')}
               title="Deep Reinforcement Learning Pre-Processing & Execution Backtester"
             >
-              <Cpu size={13} color="#10b981" /> <span className="label-text">DRL Studio</span>
+              <Cpu size={13} /> <span className="label-text">DRL Studio</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'market_depth' ? 'active' : ''}`}
               onClick={() => setViewMode('market_depth')}
               title="Real-Time L2 Order Book & Depth Ladder"
             >
-              <Activity size={13} color="#38bdf8" /> <span className="label-text">Market Depth</span>
+              <Activity size={13} /> <span className="label-text">Market Depth</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'risk_sentinel' ? 'active' : ''}`}
               onClick={() => setViewMode('risk_sentinel')}
               title="Extreme Tail Risk Stress Testing & VaR"
             >
-              <ShieldAlert size={13} color="#f59e0b" /> <span className="label-text">Risk Sentinel</span>
+              <ShieldAlert size={13} /> <span className="label-text">Risk Sentinel</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'streamlit' ? 'active' : ''}`}
               onClick={() => setViewMode('streamlit')}
               title="CTO / Stakeholder Streamlit Executive Studio"
             >
-              <LayoutDashboard size={13} color="#f43f5e" /> <span className="label-text">Executive Studio</span>
+              <LayoutDashboard size={13} /> <span className="label-text">Executive Studio</span>
             </button>
             <button 
               className={`view-mode-btn ${viewMode === 'landing' ? 'active' : ''}`}
               onClick={() => setViewMode('landing')}
               title="Platform Landing Page & Architecture Overview"
             >
-              <Globe size={13} color="#a855f7" /> <span className="label-text">Overview</span>
+              <Globe size={13} /> <span className="label-text">Overview</span>
             </button>
           </div>
 
@@ -985,7 +985,7 @@ export default function App() {
                   title="Share notebook with team members"
                   style={{ padding: '6px 10px', fontSize: '12px' }}
                 >
-                  <Users size={13} color="#38bdf8" /> Share
+                  <Users size={13} /> Share
                 </button>
               </>
             )}
@@ -997,30 +997,30 @@ export default function App() {
                 onClick={() => setToolsMenuOpen(!toolsMenuOpen)}
                 title="Quant Strategy Tools & Utilities"
                 style={{ 
-                  background: toolsMenuOpen ? '#1e293b' : undefined,
-                  borderColor: toolsMenuOpen ? '#0284c7' : undefined,
+                  background: toolsMenuOpen ? 'var(--bg-hover)' : undefined,
+                  borderColor: toolsMenuOpen ? 'var(--accent-red)' : undefined,
                   padding: '6px 10px',
                   fontSize: '12px'
                 }}
               >
-                <Sliders size={13} color="#38bdf8" />
+                <Sliders size={13} />
                 <span className="btn-hide-mobile">Tools</span>
                 <ChevronDown size={11} style={{ transform: toolsMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
               </button>
 
               {toolsMenuOpen && (
                 <div className="tools-dropdown-menu">
-                  <div style={{ padding: '4px 8px 6px', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <div style={{ padding: '4px 8px 6px', fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Strategy Utilities
                   </div>
                   <button 
                     className="tools-dropdown-item"
                     onClick={() => { setShowCopilot(true); setToolsMenuOpen(false); }}
                   >
-                    <Sparkles size={14} color="#8b5cf6" />
+                    <Sparkles size={14} color="#FF4B4B" />
                     <div>
                       <div style={{ fontWeight: 600 }}>AI Alpha Copilot</div>
-                      <div style={{ fontSize: '10px', color: '#64748b' }}>Synthetic alpha & bias auditing</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Synthetic alpha & bias auditing</div>
                     </div>
                   </button>
                   <button 
@@ -1030,17 +1030,17 @@ export default function App() {
                     <GitBranch size={14} color="#f97316" />
                     <div>
                       <div style={{ fontWeight: 600 }}>Git Lineage & Diffs</div>
-                      <div style={{ fontSize: '10px', color: '#64748b' }}>Checkpoints, commit diffs & rollback</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Checkpoints, commit diffs & rollback</div>
                     </div>
                   </button>
                   <button 
                     className="tools-dropdown-item"
                     onClick={() => { setShowExecutiveBriefing(true); setToolsMenuOpen(false); }}
                   >
-                    <Printer size={14} color="#0284c7" />
+                    <Printer size={14} color="#2563eb" />
                     <div>
                       <div style={{ fontWeight: 600 }}>Executive Tear Sheet</div>
-                      <div style={{ fontSize: '10px', color: '#64748b' }}>PDF briefing memo & Slack digest</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>PDF briefing memo & Slack digest</div>
                     </div>
                   </button>
                   {viewMode === 'notebook' && (
@@ -1048,27 +1048,27 @@ export default function App() {
                       className="tools-dropdown-item"
                       onClick={() => { setShowShareModal(true); setToolsMenuOpen(false); }}
                     >
-                      <Users size={14} color="#38bdf8" />
+                      <Users size={14} color="#10b981" />
                       <div>
                         <div style={{ fontWeight: 600 }}>Share Notebook</div>
-                        <div style={{ fontSize: '10px', color: '#64748b' }}>Invite collaborators & roles</div>
+                        <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Invite collaborators & roles</div>
                       </div>
                     </button>
                   )}
 
-                  <div style={{ height: '1px', background: '#1e293b', margin: '4px 0' }} />
+                  <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
                   
-                  <div style={{ padding: '4px 8px 6px', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <div style={{ padding: '4px 8px 6px', fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Data & Pipelines
                   </div>
                   <button 
                     className="tools-dropdown-item"
                     onClick={() => { setShowDataLake(true); setToolsMenuOpen(false); }}
                   >
-                    <Database size={14} color="#a855f7" />
+                    <Database size={14} color="#8b5cf6" />
                     <div>
                       <div style={{ fontWeight: 600 }}>Data Lake Explorer</div>
-                      <div style={{ fontSize: '10px', color: '#64748b' }}>DuckDB, Parquet schema & SQL</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>DuckDB, Parquet schema & SQL</div>
                     </div>
                   </button>
                   <button 
@@ -1078,7 +1078,7 @@ export default function App() {
                     <CalendarClock size={14} color="#10b981" />
                     <div>
                       <div style={{ fontWeight: 600 }}>Automated Cron Jobs</div>
-                      <div style={{ fontSize: '10px', color: '#64748b' }}>Execution triggers & pipelines</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Execution triggers & pipelines</div>
                     </div>
                   </button>
                 </div>
@@ -1094,14 +1094,14 @@ export default function App() {
                   gap: '6px', 
                   padding: '4px 8px', 
                   borderRadius: '6px', 
-                  background: '#131b2e', 
-                  border: '1px solid #1e293b',
+                  background: 'var(--bg-surface)', 
+                  border: '1px solid var(--border-color)',
                   fontSize: '11px',
-                  color: '#cbd5e1'
+                  color: 'var(--text-secondary)'
                 }}
                 title={`Logged in as ${user.username} (${user.role || 'Quant'})`}
               >
-                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#0284c7', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#FF4B4B', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>
                   {(user.full_name || user.username || 'U')[0].toUpperCase()}
                 </div>
                 <span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -1602,7 +1602,7 @@ function Cell({
             <div className="editor-container">
               <Editor
                 height="80px" 
-                theme="vs-dark"
+                theme="vs"
                 defaultLanguage="markdown"
                 language="markdown"
                 value={cell.content}
@@ -1644,7 +1644,7 @@ function Cell({
             <div className="editor-container">
               <Editor
                 height="80px" 
-                theme="vs-dark"
+                theme="vs"
                 defaultLanguage="python"
                 language="python"
                 value={cell.content}
@@ -1990,7 +1990,7 @@ function SchedulerModal({ token, activeNotebook, onClose }) {
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '16px' }}>
-            <CalendarClock size={18} color="#0f7b6c" />
+            <CalendarClock size={18} color="#FF4B4B" />
             <span>Scheduled Pipelines (Headless Cron)</span>
           </div>
           <button className="btn-icon" onClick={onClose}><X size={18} /></button>
@@ -2063,13 +2063,13 @@ function SchedulerModal({ token, activeNotebook, onClose }) {
                         <td>
                           <div style={{ display: 'flex', gap: '6px' }}>
                             <button className="btn-secondary" onClick={() => handleTriggerRun(j.id)} title="Run immediately">
-                              <Play size={12} color="#0f7b6c" /> Run
+                              <Play size={12} color="#10B981" /> Run
                             </button>
                             <button className="btn-secondary" onClick={() => handleViewHistory(j)} title="View past run logs">
                               Logs
                             </button>
                             <button className="btn-icon" onClick={() => handleDeleteJob(j.id)} title="Delete job">
-                              <Trash2 size={13} color="#e11d48" />
+                              <Trash2 size={13} color="#EF4444" />
                             </button>
                           </div>
                         </td>
