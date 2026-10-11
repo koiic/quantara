@@ -180,6 +180,21 @@ export default function App() {
   const [showVersionControl, setShowVersionControl] = useState(false);
   const [showExecutiveBriefing, setShowExecutiveBriefing] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [toolsMenuOpen, setToolsMenuOpen] = useState(false);
+  const toolsMenuRef = useRef(null);
+
+  // Close tools menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target)) {
+        setToolsMenuOpen(false);
+      }
+    };
+    if (toolsMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [toolsMenuOpen]);
 
   // Auth UI state
   const [authTab, setAuthTab] = useState('login'); // 'login' | 'register'
@@ -611,17 +626,58 @@ export default function App() {
 
   if (!token) {
     return (
-      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
-        <div style={{ background: 'white', padding: '36px', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04)', width: '380px', border: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', fontWeight: 'bold', fontSize: '18px', color: '#0f172a' }}>
-            <div style={{ background: '#2563eb', color: 'white', borderRadius: '8px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Terminal size={18} />
+      <div style={{ 
+        display: 'flex', 
+        height: '100vh', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        background: 'radial-gradient(ellipse at 50% 25%, rgba(2, 132, 199, 0.12) 0%, #070b14 70%)',
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+      }}>
+        <div style={{ 
+          background: '#0d1322', 
+          padding: '36px 32px', 
+          borderRadius: '14px', 
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05)', 
+          width: '400px', 
+          border: '1px solid #1e293b' 
+        }}>
+          {/* Brand Header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <div style={{ 
+              background: 'linear-gradient(135deg, #0284c7, #2563eb)', 
+              color: 'white', 
+              borderRadius: '8px', 
+              padding: '8px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(2, 132, 199, 0.35)'
+            }}>
+              <Terminal size={20} />
             </div>
-            Quantara Quant Platform
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontWeight: 700, fontSize: '18px', color: '#f8fafc', letterSpacing: '-0.3px' }}>Quantara</span>
+                <span style={{ 
+                  background: 'rgba(2, 132, 199, 0.15)', 
+                  border: '1px solid rgba(56, 189, 248, 0.3)', 
+                  color: '#38bdf8', 
+                  fontSize: '10px', 
+                  fontWeight: 700, 
+                  borderRadius: '4px', 
+                  padding: '1px 5px',
+                  letterSpacing: '0.5px'
+                }}>PRO</span>
+              </div>
+              <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                Quantitative Research & Staging Hub
+              </div>
+            </div>
           </div>
 
           {/* Auth Tab Switcher */}
-          <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '8px', padding: '3px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', background: '#070b14', borderRadius: '8px', padding: '3px', margin: '20px 0 18px', border: '1px solid #1e293b' }}>
             <button
               type="button"
               onClick={() => { setAuthTab('login'); setAuthError(null); }}
@@ -632,9 +688,9 @@ export default function App() {
                 fontWeight: 600,
                 borderRadius: '6px',
                 border: 'none',
-                background: authTab === 'login' ? '#ffffff' : 'transparent',
-                color: authTab === 'login' ? '#0f172a' : '#64748b',
-                boxShadow: authTab === 'login' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                background: authTab === 'login' ? '#1e293b' : 'transparent',
+                color: authTab === 'login' ? '#f8fafc' : '#64748b',
+                boxShadow: authTab === 'login' ? '0 1px 4px rgba(0,0,0,0.4)' : 'none',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
               }}
@@ -651,9 +707,9 @@ export default function App() {
                 fontWeight: 600,
                 borderRadius: '6px',
                 border: 'none',
-                background: authTab === 'register' ? '#ffffff' : 'transparent',
-                color: authTab === 'register' ? '#0f172a' : '#64748b',
-                boxShadow: authTab === 'register' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                background: authTab === 'register' ? '#1e293b' : 'transparent',
+                color: authTab === 'register' ? '#f8fafc' : '#64748b',
+                boxShadow: authTab === 'register' ? '0 1px 4px rgba(0,0,0,0.4)' : 'none',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
               }}
@@ -663,7 +719,15 @@ export default function App() {
           </div>
 
           {authError && (
-            <div style={{ background: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c', padding: '8px 12px', borderRadius: '6px', fontSize: '12px', marginBottom: '16px' }}>
+            <div style={{ 
+              background: 'rgba(244, 63, 94, 0.1)', 
+              border: '1px solid rgba(244, 63, 94, 0.3)', 
+              color: '#fb7185', 
+              padding: '9px 12px', 
+              borderRadius: '6px', 
+              fontSize: '12px', 
+              marginBottom: '16px' 
+            }}>
               {authError}
             </div>
           )}
@@ -671,40 +735,167 @@ export default function App() {
           {authTab === 'login' ? (
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
-                <label style={{ fontSize: '11px', color: '#475569', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username</label>
-                <input name="username" type="text" defaultValue="admin" required style={{ width: '100%', padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', marginTop: '4px', fontSize: '13px' }} />
+                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username</label>
+                <input 
+                  name="username" 
+                  type="text" 
+                  defaultValue="admin" 
+                  required 
+                  style={{ 
+                    width: '100%', 
+                    padding: '9px 12px', 
+                    background: '#131b2e', 
+                    border: '1px solid #334155', 
+                    borderRadius: '6px', 
+                    marginTop: '4px', 
+                    fontSize: '13px', 
+                    color: '#f8fafc',
+                    boxSizing: 'border-box'
+                  }} 
+                />
               </div>
               <div>
-                <label style={{ fontSize: '11px', color: '#475569', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
-                <input name="password" type="password" defaultValue="admin" required style={{ width: '100%', padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', marginTop: '4px', fontSize: '13px' }} />
+                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password</label>
+                <input 
+                  name="password" 
+                  type="password" 
+                  defaultValue="admin" 
+                  required 
+                  style={{ 
+                    width: '100%', 
+                    padding: '9px 12px', 
+                    background: '#131b2e', 
+                    border: '1px solid #334155', 
+                    borderRadius: '6px', 
+                    marginTop: '4px', 
+                    fontSize: '13px', 
+                    color: '#f8fafc',
+                    boxSizing: 'border-box'
+                  }} 
+                />
               </div>
-              <button type="submit" disabled={authLoading} className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '6px', padding: '9px 0', background: '#2563eb' }}>
-                <Lock size={15} /> {authLoading ? 'Signing In...' : 'Sign In to Hub'}
+              <button 
+                type="submit" 
+                disabled={authLoading} 
+                className="btn-primary" 
+                style={{ 
+                  width: '100%', 
+                  justifyContent: 'center', 
+                  marginTop: '6px', 
+                  padding: '10px 0',
+                  boxShadow: '0 4px 14px rgba(2, 132, 199, 0.35)'
+                }}
+              >
+                <Lock size={14} /> {authLoading ? 'Signing In...' : 'Sign In to Hub'}
               </button>
-              <div style={{ fontSize: '11px', color: '#64748b', textAlign: 'center', marginTop: '6px' }}>
-                Quick demo accounts: <b>admin</b> / <b>admin</b> or <b>quant1</b> / <b>quant123</b>
+              <div style={{ 
+                fontSize: '11px', 
+                color: '#94a3b8', 
+                textAlign: 'center', 
+                marginTop: '6px',
+                background: '#070b14',
+                border: '1px solid #1e293b',
+                padding: '8px 10px',
+                borderRadius: '6px'
+              }}>
+                Demo accounts: <code style={{ color: '#38bdf8' }}>admin</code> / <code style={{ color: '#38bdf8' }}>admin</code> or <code style={{ color: '#38bdf8' }}>quant1</code> / <code style={{ color: '#38bdf8' }}>quant123</code>
               </div>
             </form>
           ) : (
             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label style={{ fontSize: '11px', color: '#475569', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username *</label>
-                <input name="reg_username" type="text" placeholder="e.g. sarah_quant" required style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', marginTop: '4px', fontSize: '13px' }} />
+                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Username *</label>
+                <input 
+                  name="reg_username" 
+                  type="text" 
+                  placeholder="e.g. sarah_quant" 
+                  required 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 12px', 
+                    background: '#131b2e', 
+                    border: '1px solid #334155', 
+                    borderRadius: '6px', 
+                    marginTop: '4px', 
+                    fontSize: '13px', 
+                    color: '#f8fafc',
+                    boxSizing: 'border-box'
+                  }} 
+                />
               </div>
               <div>
-                <label style={{ fontSize: '11px', color: '#475569', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</label>
-                <input name="reg_fullname" type="text" placeholder="e.g. Sarah Chen, CFA" style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', marginTop: '4px', fontSize: '13px' }} />
+                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</label>
+                <input 
+                  name="reg_fullname" 
+                  type="text" 
+                  placeholder="e.g. Sarah Chen, CFA" 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 12px', 
+                    background: '#131b2e', 
+                    border: '1px solid #334155', 
+                    borderRadius: '6px', 
+                    marginTop: '4px', 
+                    fontSize: '13px', 
+                    color: '#f8fafc',
+                    boxSizing: 'border-box'
+                  }} 
+                />
               </div>
               <div>
-                <label style={{ fontSize: '11px', color: '#475569', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Corporate / Quant Email</label>
-                <input name="reg_email" type="email" placeholder="e.g. schen@firm.com" style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', marginTop: '4px', fontSize: '13px' }} />
+                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Corporate / Quant Email</label>
+                <input 
+                  name="reg_email" 
+                  type="email" 
+                  placeholder="e.g. schen@firm.com" 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 12px', 
+                    background: '#131b2e', 
+                    border: '1px solid #334155', 
+                    borderRadius: '6px', 
+                    marginTop: '4px', 
+                    fontSize: '13px', 
+                    color: '#f8fafc',
+                    boxSizing: 'border-box'
+                  }} 
+                />
               </div>
               <div>
-                <label style={{ fontSize: '11px', color: '#475569', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password *</label>
-                <input name="reg_password" type="password" placeholder="At least 4 characters" required minLength={4} style={{ width: '100%', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', marginTop: '4px', fontSize: '13px' }} />
+                <label style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Password *</label>
+                <input 
+                  name="reg_password" 
+                  type="password" 
+                  placeholder="At least 4 characters" 
+                  required 
+                  minLength={4} 
+                  style={{ 
+                    width: '100%', 
+                    padding: '8px 12px', 
+                    background: '#131b2e', 
+                    border: '1px solid #334155', 
+                    borderRadius: '6px', 
+                    marginTop: '4px', 
+                    fontSize: '13px', 
+                    color: '#f8fafc',
+                    boxSizing: 'border-box'
+                  }} 
+                />
               </div>
-              <button type="submit" disabled={authLoading} className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '6px', padding: '9px 0', background: '#10b981' }}>
-                <User size={15} /> {authLoading ? 'Creating Account...' : 'Register & Enter Workspace'}
+              <button 
+                type="submit" 
+                disabled={authLoading} 
+                className="btn-primary" 
+                style={{ 
+                  width: '100%', 
+                  justifyContent: 'center', 
+                  marginTop: '6px', 
+                  padding: '10px 0', 
+                  background: 'linear-gradient(135deg, #059669, #10b981)',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.25)'
+                }}
+              >
+                <User size={14} /> {authLoading ? 'Creating Account...' : 'Register & Enter Workspace'}
               </button>
               <div style={{ fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
                 Personal workspace & models are securely persisted in SQLite.
@@ -830,79 +1021,64 @@ export default function App() {
           }} 
         />
 
-        {/* TOP NAV & TOOLBAR */}
-        <div style={{ height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', borderBottom: '1px solid var(--border-color)', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button className="btn-icon" onClick={() => setSidebarOpen(!sidebarOpen)} title={sidebarOpen ? "Close sidebar" : "Open sidebar"}>
-              <SidebarIcon size={18} />
+        {/* 3-ZONE INSTITUTIONAL TOP NAV & TOOLBAR */}
+        <div style={{ 
+          height: '52px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          padding: '0 16px', 
+          background: 'var(--bg-panel)',
+          borderBottom: '1px solid var(--border-color)', 
+          flexShrink: 0,
+          gap: '12px'
+        }}>
+          {/* ZONE 1 (LEFT): SIDEBAR TOGGLE, BREADCRUMB & ROLE, COLLABORATORS */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flexShrink: 0 }}>
+            <button className="btn-icon" onClick={() => setSidebarOpen(!sidebarOpen)} title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}>
+              <SidebarIcon size={16} />
             </button>
 
-            {/* 4-Pillar View Switcher */}
-            <div className="view-mode-toggle">
-              <button 
-                className={`view-mode-btn ${viewMode === 'notebook' ? 'active' : ''}`}
-                onClick={() => setViewMode('notebook')}
-                title="Interactive Quant Research Notebook"
-              >
-                <FileText size={13} /> Notebook
-              </button>
-              <button 
-                className={`view-mode-btn ${viewMode === 'streamlit' ? 'active' : ''}`}
-                onClick={() => setViewMode('streamlit')}
-                title="CTO / Stakeholder Streamlit Executive Studio"
-              >
-                <LayoutDashboard size={13} color="#e11d48" /> Executive Studio
-              </button>
-              <button 
-                className={`view-mode-btn ${viewMode === 'market_depth' ? 'active' : ''}`}
-                onClick={() => setViewMode('market_depth')}
-                title="Real-Time L2 Order Book & Depth Ladder"
-              >
-                <Activity size={13} color="#10b981" /> Market Depth (L2)
-              </button>
-              <button 
-                className={`view-mode-btn ${viewMode === 'risk_sentinel' ? 'active' : ''}`}
-                onClick={() => setViewMode('risk_sentinel')}
-                title="Extreme Tail Risk Stress Testing & VaR"
-              >
-                <ShieldAlert size={13} color="#f59e0b" /> Risk Sentinel
-              </button>
-              <button 
-                className={`view-mode-btn ${viewMode === 'drl_studio' ? 'active' : ''}`}
-                onClick={() => setViewMode('drl_studio')}
-                title="Deep Reinforcement Learning Pre-Processing & Execution Backtester"
-              >
-                <Cpu size={13} color="#10b981" /> DRL Studio
-              </button>
-              <button 
-                className={`view-mode-btn ${viewMode === 'staging_shadow' ? 'active' : ''}`}
-                onClick={() => setViewMode('staging_shadow')}
-                title="Paper Trading & Shadow Dark-Launch Execution Staging"
-              >
-                <Layers size={13} color="#38bdf8" /> Staging & Shadow
-              </button>
-            </div>
-
-
-            {!sidebarOpen && activeNotebook && viewMode === 'notebook' && (
-              <>
-                <ChevronRight size={16} color="var(--text-placeholder)" />
-                <span style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: '500' }}>
+            {/* Breadcrumb & active notebook */}
+            {activeNotebook && viewMode === 'notebook' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                <span style={{ 
+                  fontSize: '13px', 
+                  fontWeight: 600, 
+                  color: 'var(--text-main)', 
+                  whiteSpace: 'nowrap', 
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis',
+                  maxWidth: '180px' 
+                }} title={activeNotebook.title || 'Untitled'}>
                   {activeNotebook.title || 'Untitled'}
                 </span>
-              </>
-            )}
-          </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Multiplayer Collaborators Awareness Avatars */}
+                {/* Role tag badge */}
+                {activeNotebook.role === 'viewer' ? (
+                  <span className="badge-warning" style={{ fontSize: '10px', padding: '1px 6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <Eye size={10} /> Viewer
+                  </span>
+                ) : activeNotebook.role === 'editor' ? (
+                  <span className="badge-info" style={{ fontSize: '10px', padding: '1px 6px' }}>
+                    Editor
+                  </span>
+                ) : (
+                  <span className="badge-neutral" style={{ fontSize: '10px', padding: '1px 6px' }}>
+                    Owner
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Multiplayer Collaborator Avatars */}
             {collaborators.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', marginRight: '6px' }} title={`${collaborators.length} active collaborator(s)`}>
+              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }} title={`${collaborators.length} active collaborator(s)`}>
                 {collaborators.map((c, i) => (
                   <div 
                     key={i} 
                     className="collaborator-avatar" 
-                    style={{ background: c.color || '#2383e2' }}
+                    style={{ background: c.color || '#0284c7' }}
                     title={c.name || c.username}
                   >
                     {(c.name || c.username || 'U').substring(0, 2).toUpperCase()}
@@ -910,111 +1086,213 @@ export default function App() {
                 ))}
               </div>
             )}
+          </div>
 
-            {/* AI Quant Copilot */}
+          {/* ZONE 2 (CENTER): 6 PERSPECTIVE PILL CONTROLS */}
+          <div className="view-mode-toggle" style={{ flexShrink: 0 }}>
             <button 
-              className="btn-secondary"
-              onClick={() => setShowCopilot(true)}
-              style={{ background: '#f5f3ff', borderColor: '#ddd6fe', color: '#6d28d9' }}
-              title="Open AI Alpha Synthesizer & Bias Auditor"
+              className={`view-mode-btn ${viewMode === 'notebook' ? 'active' : ''}`}
+              onClick={() => setViewMode('notebook')}
+              title="Interactive Quant Research Notebook"
             >
-              <Sparkles size={13} color="#8b5cf6" /> AI Copilot
+              <FileText size={13} /> Notebook
             </button>
-
-            {/* Git Version History */}
             <button 
-              className="btn-secondary"
-              onClick={() => setShowVersionControl(true)}
-              style={{ background: '#fff7ed', borderColor: '#ffedd5', color: '#c2410c' }}
-              title="Inspect Strategy Git Checkpoints & Diffs"
+              className={`view-mode-btn ${viewMode === 'staging_shadow' ? 'active' : ''}`}
+              onClick={() => setViewMode('staging_shadow')}
+              title="Paper Trading & Shadow Dark-Launch Execution Staging"
             >
-              <GitBranch size={13} color="#ea580c" /> Git Versions
+              <Layers size={13} color="#38bdf8" /> Staging & Shadow
             </button>
-
-            {/* Executive Tear Sheet Briefing */}
             <button 
-              className="btn-secondary"
-              onClick={() => setShowExecutiveBriefing(true)}
-              style={{ background: '#eff6ff', borderColor: '#dbeafe', color: '#1d4ed8' }}
-              title="Generate PDF Tear Sheet & Dispatch Slack Digest"
+              className={`view-mode-btn ${viewMode === 'drl_studio' ? 'active' : ''}`}
+              onClick={() => setViewMode('drl_studio')}
+              title="Deep Reinforcement Learning Pre-Processing & Execution Backtester"
             >
-              <Printer size={13} color="#2563eb" /> Briefing Memo
+              <Cpu size={13} color="#10b981" /> DRL Studio
             </button>
-
-            {/* Data Lake Explorer Button */}
             <button 
-              className="btn-secondary" 
-              onClick={() => setShowDataLake(true)}
-              title="Open Data Lake & Parquet Explorer"
+              className={`view-mode-btn ${viewMode === 'market_depth' ? 'active' : ''}`}
+              onClick={() => setViewMode('market_depth')}
+              title="Real-Time L2 Order Book & Depth Ladder"
             >
-              <Database size={13} color="#8b5cf6" /> Data Lake
+              <Activity size={13} color="#38bdf8" /> Market Depth
             </button>
-
-            {/* Scheduler Button */}
             <button 
-              className="btn-secondary" 
-              onClick={() => setShowScheduler(true)}
-              title="Manage background cron schedules"
+              className={`view-mode-btn ${viewMode === 'risk_sentinel' ? 'active' : ''}`}
+              onClick={() => setViewMode('risk_sentinel')}
+              title="Extreme Tail Risk Stress Testing & VaR"
             >
-              <CalendarClock size={13} color="#0f7b6c" /> Schedules
+              <ShieldAlert size={13} color="#f59e0b" /> Risk Sentinel
             </button>
+            <button 
+              className={`view-mode-btn ${viewMode === 'streamlit' ? 'active' : ''}`}
+              onClick={() => setViewMode('streamlit')}
+              title="CTO / Stakeholder Streamlit Executive Studio"
+            >
+              <LayoutDashboard size={13} color="#f43f5e" /> Executive Studio
+            </button>
+          </div>
 
+          {/* ZONE 3 (RIGHT): KERNEL STATUS & ACTIONS, TOOLS MENU, SHARE & USER */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             {viewMode === 'notebook' && (
               <>
-                {activeNotebook?.role === 'viewer' ? (
-                  <div className="status-badge" style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' }}>
-                    <Eye size={12} color="#92400e" />
-                    <span>Viewer (Read-Only)</span>
-                  </div>
-                ) : (
+                {/* Kernel Status Badge */}
+                <div className="status-badge" title="Python Kernel Status">
+                  <span className={`status-dot ${kernelStatus.state}`} />
+                  <span style={{ textTransform: 'capitalize', fontSize: '11px' }}>
+                    {kernelStatus.state === 'busy' ? 'Busy' : 
+                     kernelStatus.state === 'restarting' ? 'Restarting' : 
+                     kernelStatus.alive ? 'Idle' : 'Offline'}
+                  </span>
+                </div>
+
+                {activeNotebook?.role !== 'viewer' && (
                   <>
-                    {/* Kernel Status Badge */}
-                    <div className="status-badge">
-                      <span className={`status-dot ${kernelStatus.state}`} />
-                      <span style={{ textTransform: 'capitalize' }}>
-                        {kernelStatus.state === 'busy' ? 'Kernel Busy' : 
-                         kernelStatus.state === 'restarting' ? 'Restarting...' : 
-                         kernelStatus.alive ? 'Kernel Idle' : 'Kernel Offline'}
-                      </span>
-                    </div>
-
-                    {/* Kernel Controls */}
-                    <button 
-                      className="btn-secondary" 
-                      onClick={handleInterruptKernel}
-                      disabled={kernelStatus.state !== 'busy'}
-                      title="Interrupt execution (Ctrl+C / SIGINT)"
-                    >
-                      <Square size={13} fill={kernelStatus.state === 'busy' ? '#e11d48' : 'none'} color={kernelStatus.state === 'busy' ? '#e11d48' : 'currentColor'} /> 
-                      Interrupt
-                    </button>
-
+                    {kernelStatus.state === 'busy' && (
+                      <button 
+                        className="btn-secondary" 
+                        onClick={handleInterruptKernel}
+                        title="Interrupt execution (Ctrl+C / SIGINT)"
+                        style={{ color: '#f43f5e', borderColor: 'rgba(244,63,94,0.3)', padding: '5px 8px' }}
+                      >
+                        <Square size={12} fill="#f43f5e" />
+                      </button>
+                    )}
                     <button 
                       className="btn-secondary" 
                       onClick={handleRestartKernel}
                       disabled={kernelStatus.state === 'restarting'}
                       title="Restart kernel (Wipe memory & reset)"
+                      style={{ padding: '5px 8px' }}
                     >
-                      <RotateCcw size={13} /> 
-                      Restart
+                      <RotateCcw size={12} />
                     </button>
-
-                    <button className="btn-primary" onClick={saveWork}>
-                      <Save size={14} /> Save
+                    <button className="btn-primary" onClick={saveWork} style={{ padding: '6px 12px', fontSize: '12px' }}>
+                      <Save size={13} /> Save
                     </button>
                   </>
                 )}
 
-                {/* Share Notebook Collaborators Button */}
+                {/* Share Notebook Modal Button */}
                 <button 
                   className="btn-secondary"
                   onClick={() => setShowShareModal(true)}
-                  style={{ background: '#eff6ff', borderColor: '#dbeafe', color: '#1d4ed8' }}
-                  title="Share notebook with team members (Editor vs Viewer)"
+                  title="Share notebook with team members"
+                  style={{ padding: '6px 10px', fontSize: '12px' }}
                 >
-                  <Users size={13} color="#2563eb" /> Share
+                  <Users size={13} color="#38bdf8" /> Share
                 </button>
               </>
+            )}
+
+            {/* Consolidated Institutional Tools Dropdown */}
+            <div style={{ position: 'relative' }} ref={toolsMenuRef}>
+              <button 
+                className={`btn-secondary ${toolsMenuOpen ? 'active' : ''}`}
+                onClick={() => setToolsMenuOpen(!toolsMenuOpen)}
+                title="Quant Strategy Tools & Utilities"
+                style={{ 
+                  background: toolsMenuOpen ? '#1e293b' : undefined,
+                  borderColor: toolsMenuOpen ? '#0284c7' : undefined,
+                  padding: '6px 10px',
+                  fontSize: '12px'
+                }}
+              >
+                <Sliders size={13} color="#38bdf8" />
+                <span>Tools</span>
+                <ChevronDown size={11} style={{ transform: toolsMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+              </button>
+
+              {toolsMenuOpen && (
+                <div className="tools-dropdown-menu">
+                  <div style={{ padding: '4px 8px 6px', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Strategy Utilities
+                  </div>
+                  <button 
+                    className="tools-dropdown-item"
+                    onClick={() => { setShowCopilot(true); setToolsMenuOpen(false); }}
+                  >
+                    <Sparkles size={14} color="#8b5cf6" />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>AI Alpha Copilot</div>
+                      <div style={{ fontSize: '10px', color: '#64748b' }}>Synthetic alpha & bias auditing</div>
+                    </div>
+                  </button>
+                  <button 
+                    className="tools-dropdown-item"
+                    onClick={() => { setShowVersionControl(true); setToolsMenuOpen(false); }}
+                  >
+                    <GitBranch size={14} color="#f97316" />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Git Lineage & Diffs</div>
+                      <div style={{ fontSize: '10px', color: '#64748b' }}>Checkpoints, commit diffs & rollback</div>
+                    </div>
+                  </button>
+                  <button 
+                    className="tools-dropdown-item"
+                    onClick={() => { setShowExecutiveBriefing(true); setToolsMenuOpen(false); }}
+                  >
+                    <Printer size={14} color="#0284c7" />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Executive Tear Sheet</div>
+                      <div style={{ fontSize: '10px', color: '#64748b' }}>PDF briefing memo & Slack digest</div>
+                    </div>
+                  </button>
+
+                  <div style={{ height: '1px', background: '#1e293b', margin: '4px 0' }} />
+                  
+                  <div style={{ padding: '4px 8px 6px', fontSize: '10px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Data & Pipelines
+                  </div>
+                  <button 
+                    className="tools-dropdown-item"
+                    onClick={() => { setShowDataLake(true); setToolsMenuOpen(false); }}
+                  >
+                    <Database size={14} color="#a855f7" />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Data Lake Explorer</div>
+                      <div style={{ fontSize: '10px', color: '#64748b' }}>DuckDB, Parquet schema & SQL</div>
+                    </div>
+                  </button>
+                  <button 
+                    className="tools-dropdown-item"
+                    onClick={() => { setShowScheduler(true); setToolsMenuOpen(false); }}
+                  >
+                    <CalendarClock size={14} color="#10b981" />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Automated Cron Jobs</div>
+                      <div style={{ fontSize: '10px', color: '#64748b' }}>Execution triggers & pipelines</div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Quick User Avatar Badge */}
+            {user && (
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px', 
+                  padding: '4px 8px', 
+                  borderRadius: '6px', 
+                  background: '#131b2e', 
+                  border: '1px solid #1e293b',
+                  fontSize: '11px',
+                  color: '#cbd5e1'
+                }}
+                title={`Logged in as ${user.username} (${user.role || 'Quant'})`}
+              >
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#0284c7', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>
+                  {(user.full_name || user.username || 'U')[0].toUpperCase()}
+                </div>
+                <span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.username}
+                </span>
+              </div>
             )}
           </div>
         </div>
@@ -1492,6 +1770,7 @@ function Cell({
             <div className="editor-container">
               <Editor
                 height="80px" 
+                theme="vs-dark"
                 defaultLanguage="markdown"
                 language="markdown"
                 value={cell.content}
@@ -1533,6 +1812,7 @@ function Cell({
             <div className="editor-container">
               <Editor
                 height="80px" 
+                theme="vs-dark"
                 defaultLanguage="python"
                 language="python"
                 value={cell.content}
