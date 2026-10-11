@@ -36,11 +36,57 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- Institutional Asset Catalog (Crypto, Equities, Tadawul, Forex) ---
+ASSET_CATALOG = {
+    # Crypto
+    "BTC-USD": {"name": "Bitcoin", "category": "Crypto", "base": 68450.0, "vol": 0.032, "decimals": 2, "curr": "$"},
+    "ETH-USD": {"name": "Ethereum", "category": "Crypto", "base": 3520.0, "vol": 0.035, "decimals": 2, "curr": "$"},
+    "SOL-USD": {"name": "Solana", "category": "Crypto", "base": 182.4, "vol": 0.042, "decimals": 2, "curr": "$"},
+    
+    # US Equities
+    "NVDA": {"name": "NVIDIA Corp", "category": "US Equities", "base": 138.25, "vol": 0.024, "decimals": 2, "curr": "$"},
+    "AAPL": {"name": "Apple Inc", "category": "US Equities", "base": 227.50, "vol": 0.014, "decimals": 2, "curr": "$"},
+    "MSFT": {"name": "Microsoft Corp", "category": "US Equities", "base": 418.30, "vol": 0.015, "decimals": 2, "curr": "$"},
+    "TSLA": {"name": "Tesla Inc", "category": "US Equities", "base": 252.10, "vol": 0.028, "decimals": 2, "curr": "$"},
+    "SPY": {"name": "SPDR S&P 500 ETF", "category": "US Equities", "base": 586.40, "vol": 0.010, "decimals": 2, "curr": "$"},
+    
+    # Saudi Tadawul Equities
+    "2222.SR": {"name": "Saudi Aramco", "category": "Saudi Tadawul", "base": 27.80, "vol": 0.008, "decimals": 2, "curr": "SAR "},
+    "1120.SR": {"name": "Al Rajhi Bank", "category": "Saudi Tadawul", "base": 84.50, "vol": 0.012, "decimals": 2, "curr": "SAR "},
+    "2010.SR": {"name": "SABIC Industries", "category": "Saudi Tadawul", "base": 72.10, "vol": 0.011, "decimals": 2, "curr": "SAR "},
+    
+    # Forex / FX
+    "EUR/USD": {"name": "Euro / US Dollar", "category": "Forex (FX)", "base": 1.0852, "vol": 0.0035, "decimals": 4, "curr": "$"},
+    "GBP/USD": {"name": "British Pound / US Dollar", "category": "Forex (FX)", "base": 1.3065, "vol": 0.0042, "decimals": 4, "curr": "$"},
+    "USD/JPY": {"name": "US Dollar / Japanese Yen", "category": "Forex (FX)", "base": 149.25, "vol": 0.0055, "decimals": 2, "curr": "¥"},
+    "USD/CHF": {"name": "US Dollar / Swiss Franc", "category": "Forex (FX)", "base": 0.8648, "vol": 0.0038, "decimals": 4, "curr": "CHF "},
+    "AUD/USD": {"name": "Australian Dollar / US Dollar", "category": "Forex (FX)", "base": 0.6718, "vol": 0.0048, "decimals": 4, "curr": "$"},
+}
+
 # --- Sidebar Controls ---
 st.sidebar.title("⚡ Quantara Controls")
-st.sidebar.markdown("*Executive parameters for strategy evaluation*")
+st.sidebar.markdown("*Executive multi-asset parameters for strategy evaluation*")
 
-selected_asset = st.sidebar.selectbox("Target Asset", ["BTC-USD", "ETH-USD", "SOL-USD"], index=0)
+selected_market = st.sidebar.selectbox(
+    "Asset Class / Market",
+    ["All Markets", "Crypto", "US Equities", "Saudi Tadawul", "Forex (FX)"],
+    index=0
+)
+
+# Filter asset choices based on market
+if selected_market == "All Markets":
+    available_symbols = list(ASSET_CATALOG.keys())
+else:
+    available_symbols = [s for s, meta in ASSET_CATALOG.items() if meta["category"] == selected_market]
+
+selected_asset = st.sidebar.selectbox(
+    "Target Asset",
+    available_symbols,
+    format_func=lambda s: f"{s} — {ASSET_CATALOG[s]['name']} ({ASSET_CATALOG[s]['category']})"
+)
+
+asset_meta = ASSET_CATALOG[selected_asset]
+
 lookback_window = st.sidebar.slider("SMA Lookback Window (Days)", min_value=5, max_value=50, value=20, step=1)
 bollinger_std = st.sidebar.slider("Bollinger Band Multiplier (σ)", min_value=1.0, max_value=3.0, value=2.0, step=0.1)
 
@@ -50,24 +96,40 @@ data_source = st.sidebar.radio("Data Engine", ["DuckDB Parquet Lake", "Synthetic
 
 # --- Header ---
 st.title("📈 Quantara Alpha: Executive Strategy & Risk Dashboard")
-st.markdown(f"**Asset:** `{selected_asset}` | **Regime:** *Mean-Reversion with Adaptive Bollinger Bands* | **Data Lake Status:** 🟢 *Connected*")
+st.markdown(
+    f"**Asset:** `{selected_asset}` ({asset_meta['name']}) | "
+    f"**Market Class:** `{asset_meta['category']}` | "
+    f"**Regime:** *Mean-Reversion with Adaptive Bollinger Bands* | "
+    f"**Data Lake Status:** 🟢 *Connected*"
+)
 
 # --- Generate / Query Data ---
 @st.cache_data(ttl=60)
 def load_market_data(asset, lookback):
+    meta = ASSET_CATALOG.get(asset, ASSET_CATALOG["BTC-USD"])
     dates = pd.date_range(end=pd.Timestamp.now(), periods=120, freq="D")
-    np.random.seed(42 if asset == "BTC-USD" else 99)
-    base_price = 65000 if asset == "BTC-USD" else (3200 if asset == "ETH-USD" else 150)
-    returns = np.random.normal(0.0015, 0.022, len(dates))
+    
+    # Hash seed by asset name
+    seed_val = abs(hash(asset)) % 10000
+    np.random.seed(seed_val)
+    
+    base_price = meta["base"]
+    vol = meta["vol"]
+    returns = np.random.normal(0.0008, vol, len(dates))
     prices = base_price * (1 + returns).cumprod()
+    
+    high_noise = np.random.uniform(0.003, 0.015, len(dates))
+    low_noise = np.random.uniform(0.003, 0.015, len(dates))
+    
+    vol_scale = 100000 if meta["category"] == "Forex (FX)" else (50000 if meta["category"] == "Crypto" else 250000)
     
     df = pd.DataFrame({
         "Date": dates,
-        "Open": prices * (1 - np.random.uniform(0, 0.01, len(dates))),
-        "High": prices * (1 + np.random.uniform(0.01, 0.03, len(dates))),
-        "Low": prices * (1 - np.random.uniform(0.01, 0.03, len(dates))),
+        "Open": prices * (1 - low_noise * 0.5),
+        "High": prices * (1 + high_noise),
+        "Low": prices * (1 - low_noise),
         "Close": prices,
-        "Volume": np.random.uniform(15000, 85000, len(dates))
+        "Volume": np.random.uniform(vol_scale * 0.4, vol_scale * 1.6, len(dates))
     }).set_index("Date")
     
     # Technical Indicators
@@ -76,7 +138,7 @@ def load_market_data(asset, lookback):
     df["Upper_Band"] = df["SMA"] + bollinger_std * df["Std"]
     df["Lower_Band"] = df["SMA"] - bollinger_std * df["Std"]
     
-    # Simulated Returns
+    # Simulated Strategy Returns
     df["Strategy_Return"] = df["Close"].pct_change().shift(-1) * np.where(df["Close"] < df["Lower_Band"], 1, np.where(df["Close"] > df["Upper_Band"], -1, 0))
     df["Cumulative_Strategy"] = (1 + df["Strategy_Return"].fillna(0)).cumprod()
     df["Cumulative_Benchmark"] = (1 + df["Close"].pct_change().fillna(0)).cumprod()
@@ -95,12 +157,20 @@ drawdown = (df["Cumulative_Strategy"] - rolling_max) / rolling_max
 max_dd = drawdown.min()
 win_rate = (daily_strat > 0).mean() * 100 if len(daily_strat) > 0 else 0
 
+decimals = asset_meta["decimals"]
+curr_sym = asset_meta["curr"]
+last_price = df['Close'].iloc[-1]
+
 col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Strategy Return (YTD)", f"{strat_ret:+.1%}", f"{strat_ret - bench_ret:+.1%} vs Bench")
 col2.metric("Annualized Sharpe", f"{sharpe:.2f}", "+0.45 vs Target")
-col3.metric("Max Drawdown", f"{max_dd:.1%}", "Within 10% Risk Limit")
+col3.metric("Max Drawdown", f"{max_dd:.1%}", "Within Risk Limits")
 col4.metric("Strategy Win Rate", f"{win_rate:.1f}%", "+4.2% vs Benchmark")
-col5.metric("Asset Spot Price", f"${df['Close'].iloc[-1]:,.2f}", f"{df['Close'].pct_change().iloc[-1]:+.2%}")
+col5.metric(
+    "Asset Spot Price", 
+    f"{curr_sym}{last_price:,.{decimals}f}", 
+    f"{df['Close'].pct_change().iloc[-1]:+.2%}"
+)
 
 st.markdown("---")
 
@@ -126,7 +196,7 @@ with tab1:
     fig.add_trace(go.Bar(x=df.index, y=df['Volume'], name="Volume", marker_color=colors), row=2, col=1)
     
     fig.update_layout(
-        title=f"{selected_asset} Technical Regimes & Signals",
+        title=f"{selected_asset} ({asset_meta['name']}) Technical Regimes & Signals",
         height=580,
         margin=dict(l=20, r=20, t=50, b=20),
         template="plotly_white",
@@ -139,7 +209,7 @@ with tab2:
     fig_perf.add_trace(go.Scatter(x=df.index, y=df['Cumulative_Strategy'], name="Quantara Alpha Strategy", line=dict(color="#0f7b6c", width=2.5)))
     fig_perf.add_trace(go.Scatter(x=df.index, y=df['Cumulative_Benchmark'], name=f"{selected_asset} Buy & Hold", line=dict(color="#9ca3af", dash="dot", width=1.5)))
     fig_perf.update_layout(
-        title="Strategy Performance vs Buy-and-Hold Benchmark",
+        title=f"Strategy Performance vs {selected_asset} Buy-and-Hold Benchmark",
         yaxis_title="Normalized Return (1.0 = Base)",
         template="plotly_white",
         height=400,

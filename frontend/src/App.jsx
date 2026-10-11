@@ -43,6 +43,43 @@ marked.setOptions({
 
 const TEMPLATES = [
   {
+    id: 'tpl-multi-asset',
+    icon: <Layers size={16} color="#2563eb" />,
+    title: 'Universal Multi-Market (3,000+ Assets) Normalization Pipeline',
+    cells: [
+      {
+        id: 'norm-c0',
+        type: 'markdown',
+        content: '# Universal Multi-Market (3,000+ Assets) Normalization & Feature Pipeline\\n### Institutional Quantitative Architecture\\nThis enterprise pipeline ingests, harmonizes, filters, and feature-engineers large-scale cross-market feeds (**3,000+ assets** across **US Equities, Saudi Tadawul, Forex, and Crypto**) from raw CSV/Parquet into institutional-grade feature stores.\\n\\n**Pipeline Architecture:**\\n1. **High-Throughput Ingestion & RAM Downcasting:** Downcast `float64` to `float32`, category encoding for symbols (65%+ memory reduction).\\n2. **Schema & Timezone Harmonization:** Standardize to canonical OHLCV schema and UTC timestamps.\\n3. **Calendar Masking:** Harmonize differing trading weeks (Tadawul Sun-Thu, US Mon-Fri, FX 24/5, Crypto 24/7).\\n4. **Data Integrity & Outlier Clean:** Purge duplicate rows, invalid quotes, and flash-crash bad tick spikes via Rolling MAD.\\n5. **Cross-Sectional Filtering:** Average Daily Dollar Volume ($ADV_\\\\$ \\\\ge \\\\$250,000$), penny-stock elimination, and coverage filters.\\n6. **Advanced Financial Transformations:** Garman-Klass Volatility, Amihud Illiquidity, Cross-Sectional Z-Score & Rank (per timestamp $t$), and Marcos López de Prado Fractional Differentiation ($d=0.40$).\\n7. **Partitioned Parquet Lake Export & DuckDB SQL Queries:** Sub-second analytics on partitioned columnar store.'
+      },
+      {
+        id: 'norm-c1',
+        type: 'code',
+        content: 'import numpy as np\\nimport pandas as pd\\nimport duckdb\\nimport time\\n\\nprint("="*75)\\nprint("STAGE 1 & 2: INGESTION & MEMORY-OPTIMIZED SCHEMA NORMALIZATION")\\nprint("="*75)\\n\\n# Simulate or Ingest 3,000 Multi-Market Assets\\nnp.random.seed(42)\\nn_assets = 3000\\nn_days = 60\\ndates = pd.date_range(end=pd.Timestamp.now(tz="UTC").floor("D"), periods=n_days, freq="B")\\n\\nprint(f"[*] Ingesting {n_assets:,} assets across US Equities, Tadawul, Crypto, and FX...")\\n\\nfrom notebooks.universal_multi_asset_normalization_pipeline import (\\n    generate_synthetic_multi_market_feed,\\n    optimize_memory,\\n    normalize_schema,\\n    clean_and_audit_data,\\n    apply_universe_filters,\\n    engineer_features,\\n    export_to_parquet_lake\\n)\\n\\nraw_df = generate_synthetic_multi_market_feed(n_assets=n_assets, n_days=n_days)\\nmem_df = optimize_memory(raw_df)\\nschema_df = normalize_schema(mem_df)\\ndisplay(schema_df.head(5))'
+      },
+      {
+        id: 'norm-c2',
+        type: 'code',
+        content: 'print("="*75)\\nprint("STAGE 3 & 4: DATA INTEGRITY AUDIT & OUTLIER / BAD TICK REMOVAL")\\nprint("="*75)\\n\\nclean_df = clean_and_audit_data(schema_df)\\nprint("\\\\nDataset Overview Post-Cleaning:")\\ndisplay(clean_df.describe().round(2))'
+      },
+      {
+        id: 'norm-c3',
+        type: 'code',
+        content: 'print("="*75)\\nprint("STAGE 5: CROSS-SECTIONAL UNIVERSE FILTERING (ADV_$ & PENNY STOCKS)")\\nprint("="*75)\\n\\nuniv_df = apply_universe_filters(clean_df, min_adv_dollar=250000.0, min_price=3.0)\\nprint(f"Filtered institutional universe: {univ_df[\'symbol\'].nunique():,} assets across {len(univ_df):,} bars.")'
+      },
+      {
+        id: 'norm-c4',
+        type: 'code',
+        content: 'print("="*75)\\nprint("STAGE 6: INSTITUTIONAL FEATURE ENGINEERING & CROSS-SECTIONAL RANKING")\\nprint("="*75)\\n\\nfeatures_df = engineer_features(univ_df)\\ndisplay(features_df[["symbol", "timestamp", "close", "log_ret_1d", "garman_klass_vol", "amihud_illiq", "cs_zscore_1d", "cs_rank_1d", "frac_diff_px"]].head(8))'
+      },
+      {
+        id: 'norm-c5',
+        type: 'code',
+        content: 'print("="*75)\\nprint("STAGE 7: PARTITIONED PARQUET LAKE EXPORT & DUCKDB ANALYTICS")\\nprint("="*75)\\n\\nsummary = export_to_parquet_lake(features_df)\\ndisplay(summary)\\n\\n# Interactive Plotly Distribution Visualization\\nimport plotly.express as px\\nsample_plot = features_df[features_df["timestamp"] == features_df["timestamp"].max()]\\nfig = px.histogram(\\n    sample_plot, \\n    x="log_ret_1d", \\n    color="market", \\n    nbins=60,\\n    title="Cross-Sectional Multi-Market Return Distribution (Post-Normalization)",\\n    template="plotly_white"\\n)\\nfig.update_layout(height=450, margin=dict(l=20, r=20, t=50, b=20))\\nfig.show()\\nprint("Universal 3,000+ Asset Normalization Pipeline Execution Complete!")'
+      }
+    ]
+  },
+  {
     id: 'tpl-drl',
     icon: <Cpu size={16} color="#10b981" />,
     title: 'Autonomous DRL Agent (End-to-End Pipeline)',

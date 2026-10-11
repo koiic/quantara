@@ -1468,20 +1468,29 @@ body {
 .mitigation-item {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
   font-size: 13px;
-  color: var(--text-main);
-  background: var(--bg-cell-output);
-  padding: 8px 12px;
+  line-height: 1.5;
+  color: #1F2937;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 10px 14px;
   border-radius: 6px;
+  transition: all 0.15s ease;
+}
+.mitigation-item:hover {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
 }
 .mitigation-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #2563eb;
-  margin-top: 6px;
+  background: #2563EB;
+  margin-top: 5px;
   flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 /* ========================================================
