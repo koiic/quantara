@@ -6,7 +6,7 @@ echo "Starting Quantara Data Platform..."
 echo "Starting FastAPI Backend..."
 cd backend
 source .venv/bin/activate
-uvicorn main:app --reload --port 8001 &
+uvicorn main:app --reload --host 0.0.0.0 --port 8001 &
 BACKEND_PID=$!
 cd ..
 
@@ -20,7 +20,7 @@ cd ..
 # 3. Start Frontend
 echo "Starting React Frontend..."
 cd frontend
-npm run dev -- --port 5174 &
+npm run dev -- --host 0.0.0.0 --port 5174 &
 FRONTEND_PID=$!
 cd ..
 

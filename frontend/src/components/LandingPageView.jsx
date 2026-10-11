@@ -27,6 +27,23 @@ export default function LandingPageView({
   const [activeDeepDiveTab, setActiveDeepDiveTab] = useState('microstructure'); // 'microstructure' | 'risk' | 'crdt'
   const [openFaq, setOpenFaq] = useState(0);
 
+  // Additional Modal & Controlled Form States
+  const [showDockerModal, setShowDockerModal] = useState(false);
+  const [showEnterpriseModal, setShowEnterpriseModal] = useState(false);
+  const [loginUsername, setLoginUsername] = useState('admin');
+  const [loginPassword, setLoginPassword] = useState('admin');
+  const [copiedDockerSnippet, setCopiedDockerSnippet] = useState(false);
+  const [enterpriseEmail, setEnterpriseEmail] = useState('');
+  const [enterpriseSent, setEnterpriseSent] = useState(false);
+
+  const scrollToSection = (e, sectionId) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   // Dynamic simulation calculations based on visitor's interaction
   const simResults = useMemo(() => {
     let baseSharpe = 2.84;
@@ -54,7 +71,7 @@ export default function LandingPageView({
   }, [orderSize, selectedVenue, slippageModel]);
 
   const handleCopyInstall = () => {
-    navigator.clipboard.writeText('pip install quantara && quantara start');
+    navigator.clipboard.writeText('git clone https://github.com/koiic/quantara.git && cd quantara && ./start_all.sh');
     setCopiedCode(true);
     setTimeout(() => setCopiedCode(false), 2000);
   };
@@ -182,11 +199,11 @@ export default function LandingPageView({
           fontWeight: 500,
           color: '#4B5563'
         }}>
-          <a href="#playground" style={{ color: '#374151', textDecoration: 'none' }}>Live Playground</a>
-          <a href="#principles" style={{ color: '#374151', textDecoration: 'none' }}>Three Principles</a>
-          <a href="#capabilities" style={{ color: '#374151', textDecoration: 'none' }}>Microstructure</a>
-          <a href="#comparison" style={{ color: '#374151', textDecoration: 'none' }}>Comparison</a>
-          <a href="#desks" style={{ color: '#374151', textDecoration: 'none' }}>Desks</a>
+          <a href="#playground" onClick={(e) => scrollToSection(e, 'playground')} style={{ color: '#374151', textDecoration: 'none', cursor: 'pointer' }}>Live Playground</a>
+          <a href="#principles" onClick={(e) => scrollToSection(e, 'principles')} style={{ color: '#374151', textDecoration: 'none', cursor: 'pointer' }}>Three Principles</a>
+          <a href="#capabilities" onClick={(e) => scrollToSection(e, 'capabilities')} style={{ color: '#374151', textDecoration: 'none', cursor: 'pointer' }}>Microstructure</a>
+          <a href="#comparison" onClick={(e) => scrollToSection(e, 'comparison')} style={{ color: '#374151', textDecoration: 'none', cursor: 'pointer' }}>Comparison</a>
+          <a href="#desks" onClick={(e) => scrollToSection(e, 'desks')} style={{ color: '#374151', textDecoration: 'none', cursor: 'pointer' }}>Desks</a>
           <a 
             href="https://github.com/koiic/quantara" 
             target="_blank" 
@@ -398,6 +415,7 @@ export default function LandingPageView({
 
           <a
             href="#playground"
+            onClick={(e) => scrollToSection(e, 'playground')}
             style={{
               fontSize: '15px',
               fontWeight: 600,
@@ -407,7 +425,8 @@ export default function LandingPageView({
               paddingBottom: '2px',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '4px'
+              gap: '4px',
+              cursor: 'pointer'
             }}
           >
             Try the live strategy playground! →
@@ -774,26 +793,38 @@ export default function LandingPageView({
               </div>
             </div>
 
-            <div style={{
-              backgroundColor: '#1F2937',
-              border: '1px solid #374151',
-              borderRadius: '8px',
-              padding: '20px'
-            }}>
+            <div 
+              onClick={() => setShowDockerModal(true)}
+              style={{
+                backgroundColor: '#1F2937',
+                border: '1px solid #374151',
+                borderRadius: '8px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'border-color 0.15s ease'
+              }}
+              title="View Docker Compose configuration & run instructions"
+            >
               <div style={{ color: '#60A5FA', fontWeight: 700, fontSize: '15px', marginBottom: '6px' }}>
                 → Deploy with Docker Compose
               </div>
               <div style={{ color: '#9CA3AF', fontSize: '13px', lineHeight: 1.5 }}>
-                Deploy self-hosted on your own Linux server or workstation with SQLite and DuckDB lake.
+                Deploy self-hosted on your own Linux server or workstation with SQLite and DuckDB lake. Click to view instructions.
               </div>
             </div>
 
-            <div style={{
-              backgroundColor: '#1F2937',
-              border: '1px solid #374151',
-              borderRadius: '8px',
-              padding: '20px'
-            }}>
+            <div 
+              onClick={() => setShowEnterpriseModal(true)}
+              style={{
+                backgroundColor: '#1F2937',
+                border: '1px solid #374151',
+                borderRadius: '8px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'border-color 0.15s ease'
+              }}
+              title="Request Enterprise Kubernetes Cluster Architecture"
+            >
               <div style={{ color: '#F472B6', fontWeight: 700, fontSize: '15px', marginBottom: '6px' }}>
                 → Enterprise Desk on Kubernetes
               </div>
@@ -1412,7 +1443,114 @@ export default function LandingPageView({
         </div>
       </section>
 
-      {/* 11. CLEAN INSTITUTIONAL FOOTER */}
+      {/* 11. BOTTOM CONVERSION CTA BANNER */}
+      <section style={{
+        maxWidth: '1200px',
+        margin: '0 auto 80px',
+        padding: '0 24px'
+      }}>
+        <div style={{
+          backgroundColor: '#111827',
+          borderRadius: '16px',
+          padding: '60px 32px',
+          textAlign: 'center',
+          color: '#ffffff',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
+        }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            backgroundColor: 'rgba(255, 75, 75, 0.15)',
+            border: '1px solid rgba(255, 75, 75, 0.4)',
+            color: '#FF6B6B',
+            padding: '4px 12px',
+            borderRadius: '999px',
+            fontSize: '12px',
+            fontWeight: 700,
+            marginBottom: '20px'
+          }}>
+            READY FOR VENUE-CALIBRATED QUANTITATIVE EXECUTION?
+          </div>
+          <h2 style={{
+            fontSize: 'clamp(28px, 3.8vw, 44px)',
+            fontWeight: 900,
+            color: '#ffffff',
+            margin: '0 auto 16px',
+            maxWidth: '720px',
+            letterSpacing: '-0.025em'
+          }}>
+            Eliminate execution illusions. Stage your Python models today.
+          </h2>
+          <p style={{
+            fontSize: '16px',
+            color: '#9CA3AF',
+            maxWidth: '600px',
+            margin: '0 auto 36px',
+            lineHeight: 1.6
+          }}>
+            Join prop traders, systematic quantitative researchers, and AI fund architects executing with realistic Almgren-Chriss market impact and zero forward-peeking.
+          </p>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '14px',
+            flexWrap: 'wrap'
+          }}>
+            <button
+              onClick={() => {
+                if (isLoggedIn) {
+                  onEnterWorkspace();
+                } else {
+                  setAuthTab('login');
+                  setShowAuthModal(true);
+                }
+              }}
+              style={{
+                backgroundColor: '#FF4B4B',
+                color: '#ffffff',
+                padding: '13px 28px',
+                borderRadius: '6px',
+                fontSize: '15px',
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(255, 75, 75, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              Launch Platform Hub <ArrowRight size={16} />
+            </button>
+
+            <button
+              onClick={() => onQuickDemo('admin', 'admin')}
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '13px 24px',
+                borderRadius: '6px',
+                fontSize: '15px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <Zap size={15} color="#34D399" /> 1-Click Guest Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 12. CLEAN INSTITUTIONAL FOOTER */}
       <footer style={{
         backgroundColor: '#F9FAFB',
         borderTop: '1px solid #E5E7EB',
@@ -1596,7 +1734,8 @@ export default function LandingPageView({
                   <input
                     name="username"
                     type="text"
-                    defaultValue="admin"
+                    value={loginUsername}
+                    onChange={(e) => setLoginUsername(e.target.value)}
                     required
                     style={{
                       width: '100%',
@@ -1616,7 +1755,8 @@ export default function LandingPageView({
                   <input
                     name="password"
                     type="password"
-                    defaultValue="admin"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
                     required
                     style={{
                       width: '100%',
@@ -1665,25 +1805,50 @@ export default function LandingPageView({
                   borderRadius: '6px',
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '6px'
                 }}>
-                  <span>Demo: <code style={{ color: '#FF4B4B' }}>admin / admin</code></span>
-                  <button
-                    type="button"
-                    onClick={() => onQuickDemo('admin', 'admin')}
-                    style={{
-                      backgroundColor: '#FEE2E2',
-                      border: 'none',
-                      color: '#DC2626',
-                      padding: '3px 8px',
-                      borderRadius: '4px',
-                      fontSize: '10px',
-                      cursor: 'pointer',
-                      fontWeight: 700
-                    }}
-                  >
-                    1-Click Auto Fill
-                  </button>
+                  <span>Default Demo: <code style={{ color: '#FF4B4B', fontWeight: 600 }}>admin / admin</code></span>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoginUsername('admin');
+                        setLoginPassword('admin');
+                      }}
+                      style={{
+                        backgroundColor: '#EFF6FF',
+                        border: '1px solid #BFDBFE',
+                        color: '#1D4ED8',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        cursor: 'pointer',
+                        fontWeight: 600
+                      }}
+                      title="Populate input fields with default demo credentials"
+                    >
+                      Auto-Fill Fields
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onQuickDemo('admin', 'admin')}
+                      style={{
+                        backgroundColor: '#ECFDF5',
+                        border: '1px solid #A7F3D0',
+                        color: '#065F46',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        cursor: 'pointer',
+                        fontWeight: 700
+                      }}
+                      title="Log in directly without clicking submit"
+                    >
+                      Instant Guest Demo
+                    </button>
+                  </div>
                 </div>
               </form>
             ) : (
@@ -1790,6 +1955,237 @@ export default function LandingPageView({
                 >
                   <User size={14} /> {authLoading ? 'Creating Account...' : 'Register & Enter'}
                 </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 13. DOCKER COMPOSE CONFIG MODAL */}
+      {showDockerModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(17, 24, 39, 0.7)',
+          backdropFilter: 'blur(6px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 999,
+          padding: '16px'
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            padding: '28px',
+            borderRadius: '12px',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
+            width: '100%',
+            maxWidth: '560px',
+            border: '1px solid #E5E7EB',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => setShowDockerModal(false)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                color: '#9CA3AF',
+                cursor: 'pointer',
+                padding: '4px'
+              }}
+            >
+              <X size={18} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+              <div style={{ backgroundColor: '#EFF6FF', color: '#2563EB', borderRadius: '6px', padding: '6px', display: 'flex' }}>
+                <Terminal size={18} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#111827' }}>
+                  Deploy Self-Hosted with Docker
+                </h3>
+                <div style={{ fontSize: '12px', color: '#6B7280' }}>Run Quantara on your local Linux server or cluster</div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '13px', color: '#4B5563', lineHeight: 1.5, margin: '0 0 14px' }}>
+              Clone the repository and run the pre-configured container stack with SQLite, DuckDB, FastAPI backend, and React frontend:
+            </p>
+
+            <div style={{
+              backgroundColor: '#1E1E24',
+              borderRadius: '8px',
+              padding: '14px',
+              fontFamily: 'monospace',
+              fontSize: '12px',
+              color: '#F8FAFC',
+              marginBottom: '16px',
+              position: 'relative'
+            }}>
+              <div style={{ color: '#9CA3AF', marginBottom: '4px' }}># 1. Clone &amp; Enter Repo</div>
+              <div>git clone https://github.com/koiic/quantara.git</div>
+              <div>cd quantara</div>
+              <div style={{ color: '#9CA3AF', margin: '8px 0 4px' }}># 2. Start Full Platform</div>
+              <div style={{ color: '#34D399' }}>docker compose up -d</div>
+              <div style={{ color: '#9CA3AF', margin: '8px 0 4px' }}># 3. Access Workspace</div>
+              <div style={{ color: '#60A5FA' }}>http://localhost:5174 (Default: admin / admin)</div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText('git clone https://github.com/koiic/quantara.git && cd quantara && docker compose up -d');
+                  setCopiedDockerSnippet(true);
+                  setTimeout(() => setCopiedDockerSnippet(false), 2000);
+                }}
+                className="btn-secondary"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}
+              >
+                {copiedDockerSnippet ? <Check size={14} color="#10B981" /> : <Copy size={14} />}
+                {copiedDockerSnippet ? 'Copied Command!' : 'Copy Docker Command'}
+              </button>
+              <button
+                onClick={() => setShowDockerModal(false)}
+                className="btn-primary"
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 14. ENTERPRISE DESK MODAL */}
+      {showEnterpriseModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(17, 24, 39, 0.7)',
+          backdropFilter: 'blur(6px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 999,
+          padding: '16px'
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            padding: '28px',
+            borderRadius: '12px',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
+            width: '100%',
+            maxWidth: '520px',
+            border: '1px solid #E5E7EB',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => { setShowEnterpriseModal(false); setEnterpriseSent(false); }}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                color: '#9CA3AF',
+                cursor: 'pointer',
+                padding: '4px'
+              }}
+            >
+              <X size={18} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+              <div style={{ backgroundColor: '#FDF2F8', color: '#DB2777', borderRadius: '6px', padding: '6px', display: 'flex' }}>
+                <Shield size={18} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#111827' }}>
+                  Enterprise Desk &amp; Sovereign Cluster
+                </h3>
+                <div style={{ fontSize: '12px', color: '#6B7280' }}>Air-gapped on-premise deployment, FIX gateways &amp; SLA</div>
+              </div>
+            </div>
+
+            {enterpriseSent ? (
+              <div style={{ padding: '24px 0', textAlign: 'center' }}>
+                <Check size={36} color="#10B981" style={{ margin: '0 auto 10px' }} />
+                <h4 style={{ margin: '0 0 6px', fontSize: '16px', color: '#111827' }}>Inquiry Received</h4>
+                <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>
+                  Our Quantitative Solutions team will contact <b>{enterpriseEmail}</b> within 1 business day with the cluster architecture specs.
+                </p>
+                <button
+                  onClick={() => { setShowEnterpriseModal(false); setEnterpriseSent(false); }}
+                  className="btn-primary"
+                  style={{ marginTop: '18px', padding: '8px 20px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={(e) => { e.preventDefault(); if (enterpriseEmail) setEnterpriseSent(true); }}>
+                <p style={{ fontSize: '13px', color: '#4B5563', lineHeight: 1.5, margin: '0 0 16px' }}>
+                  Provide your institutional contact email to receive enterprise deployment manifests, custom broker FIX connector specs, and architecture documentation:
+                </p>
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontSize: '11px', color: '#4B5563', fontWeight: 600, textTransform: 'uppercase' }}>
+                    Corporate / Fund Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. portfolio_manager@hedgefund.com"
+                    value={enterpriseEmail}
+                    onChange={(e) => setEnterpriseEmail(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #D1D5DB',
+                      borderRadius: '6px',
+                      marginTop: '4px',
+                      fontSize: '13px',
+                      color: '#111827',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowEnterpriseModal(false)}
+                    className="btn-secondary"
+                    style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    style={{ padding: '8px 20px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}
+                  >
+                    Request Enterprise Specs
+                  </button>
+                </div>
               </form>
             )}
           </div>

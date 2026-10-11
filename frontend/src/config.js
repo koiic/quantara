@@ -16,7 +16,11 @@ export const isLocalDev = () => {
 
 export const getApiUrl = () => {
   if (typeof window === 'undefined') return 'http://localhost:8001';
-  return isLocalDev() ? 'http://localhost:8001' : window.location.origin;
+  if (isLocalDev()) {
+    const proto = window.location.protocol || 'http:';
+    return `${proto}//${window.location.hostname}:8001`;
+  }
+  return window.location.origin;
 };
 
 export const API_URL = getApiUrl();

@@ -222,10 +222,12 @@ export default function App() {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => setUser(res.data))
-      .catch(() => {
-        setToken(null);
-        localStorage.removeItem('quantara_token');
-        localStorage.removeItem('nexus_token');
+      .catch((err) => {
+        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+          setToken(null);
+          localStorage.removeItem('quantara_token');
+          localStorage.removeItem('nexus_token');
+        }
       });
     }
   }, [token]);
@@ -603,7 +605,11 @@ export default function App() {
       setShowAuthModal(false);
       setViewMode('notebook');
     } catch (err) {
-      setAuthError("Incorrect username or password. (Try admin / admin or register a new account)");
+      if (err.response?.status === 401) {
+        setAuthError("Incorrect username or password. Default demo credentials: admin / admin");
+      } else {
+        setAuthError(`Cannot reach Quantara API at ${API_URL}. Please ensure backend is running on port 8001.`);
+      }
     } finally {
       setAuthLoading(false);
     }
@@ -653,7 +659,11 @@ export default function App() {
       setShowAuthModal(false);
       setViewMode('notebook');
     } catch (err) {
-      setAuthError("Quick demo login failed. Please ensure backend is running.");
+      if (err.response?.status === 401) {
+        setAuthError("Demo user 'admin' not found in database. Please register a new account.");
+      } else {
+        setAuthError(`Cannot reach Quantara API at ${API_URL}. Please ensure backend is running on port 8001.`);
+      }
     } finally {
       setAuthLoading(false);
     }
