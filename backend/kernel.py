@@ -38,6 +38,12 @@ class KernelSession:
         if not self.kc:
             return
         setup_code = (
+            "import sys, os\n"
+            "repo_root = os.path.abspath(os.path.join(os.getcwd(), '..'))\n"
+            "if repo_root not in sys.path:\n"
+            "    sys.path.insert(0, repo_root)\n"
+            "if os.getcwd() not in sys.path:\n"
+            "    sys.path.insert(0, os.getcwd())\n"
             "try:\n"
             "    import plotly.io as pio\n"
             "    pio.renderers.default = 'notebook_connected'\n"
